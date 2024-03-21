@@ -80,7 +80,11 @@ Shader "LD CrewBoom/Environment"
 
             fixed4 frag(v2f i) : SV_Target
             {
+                #if _TRANSPARENCY_TRANSPARENT
+                BRC_LIGHTING_FRAGMENT_NOSHADOWS;
+                #else
                 BRC_LIGHTING_FRAGMENT;
+                #endif
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color * BRCLighting;
                 fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb;
                 col.rgb += emissionCol.rgb;
