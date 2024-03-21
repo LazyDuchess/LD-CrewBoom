@@ -7,6 +7,7 @@ Shader "LD CrewBoom/Environment"
         [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Blend mode Source", Int) = 1
         [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Blend mode Destination", Int) = 0
         [HideInInspector] _ZWrite ("ZWrite", Float) = 1.0
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2.0
         [HideInInspector] [KeywordEnum(Opaque, Cutout, Transparent)] _Transparency ("Transparency", Float) = 0
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
         _MainTex ("Texture", 2D) = "white" {}
@@ -19,6 +20,7 @@ Shader "LD CrewBoom/Environment"
         LOD 100
         Blend [_BlendSrc] [_BlendDst]
         ZWrite [_ZWrite]
+        Cull [_Cull]
 
         Pass
         {
