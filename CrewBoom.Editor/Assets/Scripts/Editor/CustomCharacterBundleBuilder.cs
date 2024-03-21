@@ -2,6 +2,7 @@ using CrewBoomMono;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -25,8 +26,13 @@ public static class CustomCharacterBundleBuilder
             return;
         }
 
-        string id = Guid.NewGuid().ToString();
+        var id = definition.Id;
+
+        if (string.IsNullOrEmpty(id))
+            id = Guid.NewGuid().ToString();
+
         definition.Id = id;
+        EditorUtility.SetDirty(definition);
         AssetDatabase.SaveAssets();
 
         List<AssetBundleBuild> assetBundleDefinitionList = new();

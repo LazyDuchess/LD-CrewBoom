@@ -32,6 +32,7 @@ public class CharacterDefinitionEditor : Editor
     private SerializedProperty _voiceGetHit;
     private SerializedProperty _voiceJump;
     private SerializedProperty _characterCanBlink;
+    private SerializedProperty _characterId;
 
     private const int OUTFIT_AMOUNT = 4;
     private bool[][] _materialFoldouts;
@@ -106,6 +107,7 @@ public class CharacterDefinitionEditor : Editor
         _voiceGetHit = serializedObject.FindProperty(nameof(CharacterDefinition.VoiceGetHit));
         _voiceJump = serializedObject.FindProperty(nameof(CharacterDefinition.VoiceJump));
         _characterCanBlink = serializedObject.FindProperty(nameof(CharacterDefinition.CanBlink));
+        _characterId = serializedObject.FindProperty(nameof(CharacterDefinition.Id));
 
         _invalidMessage = EditorGUIUtility.IconContent("Invalid@2x");
         _invalidMessage.text = "Character is not valid and can not be built.";
@@ -536,7 +538,25 @@ public class CharacterDefinitionEditor : Editor
 
             if (_showCharacterProperties)
             {
+                EditorGUILayout.PropertyField(_characterId, new GUIContent("GUID"));
+                if (string.IsNullOrEmpty(_characterId.stringValue))
+                {
+                    EditorGUILayout.HelpBox("A GUID will be generated on build.", MessageType.Warning);
+                }
+                else if (!Guid.TryParse(_characterId.stringValue, out var _))
+                {
+                    EditorGUILayout.HelpBox("GUID is invalid.", MessageType.Error);
+                    allValid = false;
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("The GUID is your character's unique identifier.", MessageType.Info);
+                }
+                if (GUILayout.Button("Generate New GUID"))
+                    _characterId.stringValue = Guid.NewGuid().ToString();
+                serializedObject.ApplyModifiedProperties();
                 EditorGUILayout.PropertyField(_characterName, new GUIContent("Name"));
+                serializedObject.ApplyModifiedProperties();
                 BrcCharacter previousFreestyle = _targetDefinition.FreestyleAnimation;
                 BrcCharacter previousBounce = _targetDefinition.BounceAnimation;
                 EditorGUI.BeginChangeCheck();
@@ -590,6 +610,38 @@ public class CharacterDefinitionEditor : Editor
                     ValidateOutfits();
                 }
 
+                EditorGUILayout.Space();
+
+                if (GUILayout.Button("Use Game Shader on all Outfits"))
+                {
+                    for(var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
+                    {
+                        for(var renderer = 0; renderer < _characterRenderers.arraySize; renderer++)
+                        {
+                            for(var material = 0;material < _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials.Length; material++)
+                            {
+                                _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[material] = true;
+                            }
+                        }
+                    }
+                }
+
+                if (GUILayout.Button("Uso Custom Shaders on all Outfits"))
+                {
+                    for (var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
+                    {
+                        for (var renderer = 0; renderer < _characterRenderers.arraySize; renderer++)
+                        {
+                            for (var material = 0; material < _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials.Length; material++)
+                            {
+                                _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[material] = false;
+                            }
+                        }
+                    }
+                }
+
+                EditorGUILayout.Space();
+
                 for (int outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
                 {
                     if (!DrawMultiMeshOutfitProperty(outfit, ref _targetDefinition.Outfits[outfit].Name))
@@ -631,6 +683,8 @@ public class CharacterDefinitionEditor : Editor
                     bool hasBlinkSomewhere = true;
                     foreach (SkinnedMeshRenderer renderer in _targetDefinition.Renderers)
                     {
+                        if (renderer == null)
+                            continue;
                         if (renderer.sharedMesh.blendShapeCount > 0)
                         {
                             hasBlinkSomewhere = true;

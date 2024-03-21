@@ -28,6 +28,7 @@ public class CustomCharacterCreatorMenuItem
         GameObject prefab = CreateOrFetchPrefab(model, Path.Combine(modelDirectory, $"{model.name}_character.prefab"));
         CharacterDefinition characterDefinition = prefab.AddComponent<CharacterDefinition>();
         characterDefinition.CharacterName = model.name;
+        characterDefinition.Id = System.Guid.NewGuid().ToString();
         CreateOrFetchOutfitsAndGraffiti(modelDirectory, ref characterDefinition);
 
         AssetDatabase.SaveAssets();

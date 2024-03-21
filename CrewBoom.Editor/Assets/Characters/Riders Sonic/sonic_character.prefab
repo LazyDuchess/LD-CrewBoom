@@ -1001,6 +1001,76 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7675763e9c3954f419a81e322dd5b232, type: 3}
   m_PrefabInstance: {fileID: 3738828543757679716}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5083500259348847442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4549643952022176053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9ac8d30c6a0d9642a11e5be4c440740, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Root: {fileID: 5127828977796647772}
+  m_Roots: []
+  m_UpdateRate: 60
+  m_UpdateMode: 0
+  m_Damping: 0.3
+  m_DampingDistrib:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_Elasticity: 0.1
+  m_ElasticityDistrib:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_Stiffness: 0.05
+  m_StiffnessDistrib:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_Inert: 0
+  m_InertDistrib:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_Friction: 0
+  m_FrictionDistrib:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_Radius: 0
+  m_RadiusDistrib:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_EndLength: 0
+  m_EndOffset: {x: 0, y: 0, z: 0}
+  m_Gravity: {x: 0, y: 0, z: 0}
+  m_Force: {x: 0, y: 0, z: 0}
+  m_BlendWeight: 1
+  m_Colliders: []
+  m_Exclusions: []
+  m_FreezeAxis: 0
+  m_DistantDisable: 0
+  m_ReferenceObject: {fileID: 0}
+  m_DistanceToObject: 20
+  m_Multithread: 1
 --- !u!114 &5915713344507928077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1062,6 +1132,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: fb63c986cc7c2fb449096da972f52be7, type: 3}
   CanBlink: 1
   Id: 
+--- !u!4 &5127828977796647772 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -807470854748080328, guid: 7675763e9c3954f419a81e322dd5b232, type: 3}
+  m_PrefabInstance: {fileID: 3738828543757679716}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6117851074782891995 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -1800307474769022017, guid: 7675763e9c3954f419a81e322dd5b232, type: 3}
