@@ -10,8 +10,8 @@ Shader "LD CrewBoom/Environment"
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2.0
         [HideInInspector] [KeywordEnum(Opaque, Cutout, Transparent)] _Transparency ("Transparency", Float) = 0
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
-        _MainTex ("Texture", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
+        _MainTex ("Texture", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
     }
     SubShader
