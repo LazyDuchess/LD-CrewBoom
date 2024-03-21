@@ -13,13 +13,67 @@ public class EnvironmentMaterialEditor : ShaderGUI
         Transparent
     }
 
-    public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
+    public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
+    {
+        base.AssignNewShaderToMaterial(material, oldShader, newShader);
+        ValidateNewShader(material);
+    }
+
+    private void ValidateNewShader(Material material)
+    {
+        var materials = new Material[] { material };
+        var properties = MaterialEditor.GetMaterialProperties(materials);
+        var transparencyProperty = ShaderGUI.FindProperty("_Transparency", properties);
+        ValidateTransparency(properties, material, (Transparency)transparencyProperty.floatValue);
+        ValidateRenderQueue(properties, material, (Transparency)transparencyProperty.floatValue);
+    }
+
+    private void ValidateRenderQueue(MaterialProperty[] properties, Material material, Transparency transparency)
+    {
+        switch (transparency)
+        {
+            case Transparency.Opaque:
+                material.EnableKeyword("_TRANSPARENCY_OPAQUE");
+                material.renderQueue = 2000;
+                break;
+
+            case Transparency.Cutout:
+                material.EnableKeyword("_TRANSPARENCY_CUTOUT");
+                material.renderQueue = 2450;
+                break;
+
+            case Transparency.Transparent:
+                material.EnableKeyword("_TRANSPARENCY_TRANSPARENT");
+                material.renderQueue = 3000;
+                break;
+        }
+    }
+
+    private void ValidateTransparency(MaterialProperty[] properties, Material material, Transparency transparency)
     {
         var zWriteProperty = ShaderGUI.FindProperty("_ZWrite", properties);
-        var transparencyProperty = ShaderGUI.FindProperty("_Transparency", properties);
-        
         var blendSrcProperty = ShaderGUI.FindProperty("_BlendSrc", properties);
         var blendDestProperty = ShaderGUI.FindProperty("_BlendDst", properties);
+
+        material.DisableKeyword("_TRANSPARENCY_OPAQUE");
+        material.DisableKeyword("_TRANSPARENCY_CUTOUT");
+        material.DisableKeyword("_TRANSPARENCY_TRANSPARENT");
+        if (transparency == Transparency.Transparent)
+        {
+            blendSrcProperty.floatValue = 5f;
+            blendDestProperty.floatValue = 10f;
+        }
+        else
+        {
+            blendSrcProperty.floatValue = 1f;
+            blendDestProperty.floatValue = 0f;
+        }
+        zWriteProperty.floatValue = transparency == Transparency.Transparent ? 0 : 1;
+    }
+
+    public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
+    {
+        var transparencyProperty = ShaderGUI.FindProperty("_Transparency", properties);
 
         var cutoutProperty = ShaderGUI.FindProperty("_CutOut", properties);
 
@@ -38,39 +92,10 @@ public class EnvironmentMaterialEditor : ShaderGUI
         }
         if (EditorGUI.EndChangeCheck())
         {
-            material.DisableKeyword("_TRANSPARENCY_OPAQUE");
-            material.DisableKeyword("_TRANSPARENCY_CUTOUT");
-            material.DisableKeyword("_TRANSPARENCY_TRANSPARENT");
             transparencyProperty.floatValue = (float)transparencyMode;
-            switch (transparencyMode)
-            {
-                case Transparency.Opaque:
-                    material.EnableKeyword("_TRANSPARENCY_OPAQUE");
-                    material.renderQueue = 2000;
-                    break;
-
-                case Transparency.Cutout:
-                    material.EnableKeyword("_TRANSPARENCY_CUTOUT");
-                    material.renderQueue = 2450;
-                    break;
-
-                case Transparency.Transparent:
-                    material.EnableKeyword("_TRANSPARENCY_TRANSPARENT");
-                    material.renderQueue = 3000;
-                    break;
-            }
+            ValidateRenderQueue(properties, material, transparencyMode);
         }
-        if (transparencyMode == Transparency.Transparent)
-        {
-            blendSrcProperty.floatValue = 5f;
-            blendDestProperty.floatValue = 10f;
-        }
-        else
-        {
-            blendSrcProperty.floatValue = 1f;
-            blendDestProperty.floatValue = 0f;
-        }
-        zWriteProperty.floatValue = transparencyMode == Transparency.Transparent ? 0 : 1;
+        ValidateTransparency(properties, material, transparencyMode);
         if (transparencyMode == Transparency.Cutout)
         {
             materialEditor.ShaderProperty(cutoutProperty, "Alpha Cutout");
