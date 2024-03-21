@@ -5,5 +5,10 @@ This Repository is a custom fork of the [CrewBoom Unity Project](https://github.
 * Stubbed Dynamic Bones scripts are included.
 * GUIDs for custom characters are editable and stay the same unless changed. This allows you to update custom characters without generating a new GUID each time.
 * Small QoL changes.
-* Customizable recreations of BRC shaders are included.
+* Customizable recreations of BRC shaders are included. These can be used in place of the Game Shaders.
 * Custom shaders by [Muppo](https://github.com/Muppotronic) are included.
+
+## Usage
+Head to the "Releases" tab to download the latest version. You'll be able to use this as a replacement for the CrewBoom Unity Project.
+
+[CrewBoom Documentation](https://github.com/LunaCapra/CrewBoom/wiki)
