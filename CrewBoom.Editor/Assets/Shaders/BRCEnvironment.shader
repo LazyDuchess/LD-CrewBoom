@@ -52,7 +52,7 @@ Shader "LD CrewBoom/Environment"
                 float2 uv : TEXCOORD0;
                 float4 pos : SV_POSITION;
                 float3 normal : TEXCOORD1;
-                SHADOW_COORDS(2) // put shadows data into TEXCOORD1
+                SHADOW_COORDS(2) // put shadows data into TEXCOORD2
                 float2 uv2 : TEXCOORD3;
                 float4 color : COLOR0;
             };

@@ -33,17 +33,14 @@ public class EnvironmentMaterialEditor : ShaderGUI
         switch (transparency)
         {
             case Transparency.Opaque:
-                material.EnableKeyword("_TRANSPARENCY_OPAQUE");
                 material.renderQueue = 2000;
                 break;
 
             case Transparency.Cutout:
-                material.EnableKeyword("_TRANSPARENCY_CUTOUT");
                 material.renderQueue = 2450;
                 break;
 
             case Transparency.Transparent:
-                material.EnableKeyword("_TRANSPARENCY_TRANSPARENT");
                 material.renderQueue = 3000;
                 break;
         }
@@ -69,6 +66,21 @@ public class EnvironmentMaterialEditor : ShaderGUI
             blendDestProperty.floatValue = 0f;
         }
         zWriteProperty.floatValue = transparency == Transparency.Transparent ? 0 : 1;
+
+        switch (transparency)
+        {
+            case Transparency.Opaque:
+                material.EnableKeyword("_TRANSPARENCY_OPAQUE");
+                break;
+
+            case Transparency.Cutout:
+                material.EnableKeyword("_TRANSPARENCY_CUTOUT");
+                break;
+
+            case Transparency.Transparent:
+                material.EnableKeyword("_TRANSPARENCY_TRANSPARENT");
+                break;
+        }
     }
 
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
