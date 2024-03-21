@@ -1,6 +1,6 @@
 // Made with Amplify Shader Editor v1.9.2
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "Muppo/BaseTransparentShader"
+Shader "LD CrewBoom/Muppo/BaseTransparentShader"
 {
 	Properties
 	{
