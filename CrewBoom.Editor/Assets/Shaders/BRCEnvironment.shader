@@ -80,10 +80,12 @@ Shader "LD CrewBoom/Environment"
             sampler2D _Emission;
             float4 _Emission_ST;
             float4 _Color;
+
             #if _MAINTEXSCROLL_ON
             float _MainTexUSpeed;
             float _MainTexVSpeed;
             #endif
+
             #if _EMISSIONSCROLL_ON
             float _EmissionUSpeed;
             float _EmissionVSpeed;
