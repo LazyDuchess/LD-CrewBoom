@@ -1,33 +1,25 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "LD CrewBoom/Environment"
+Shader "BRC/Ambient Environment Cutout"
 {
     Properties
     {
-        [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Blend mode Source", Int) = 1
-        [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Blend mode Destination", Int) = 0
-        [HideInInspector] _ZWrite ("ZWrite", Float) = 1.0
-        [HideInInspector] [KeywordEnum(Opaque, Cutout, Transparent)] _Transparency ("Transparency", Float) = 0
-        [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
         _MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) = (1,1,1,1)
+        _CutOut("Alpha Cutout", Range(0,1)) = 0.1
         _Emission ("Emission", 2D) = "black" {}
+        _Color ("Color", Color) = (1,1,1,1)
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
-        Blend [_BlendSrc] [_BlendDst]
-        ZWrite [_ZWrite]
 
         Pass
         {
             Tags {"LightMode" = "ForwardBase"}
             CGPROGRAM
-            #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT _TRANSPARENCY_TRANSPARENT
             #pragma vertex vert
             #pragma fragment frag
-            
 
             #include "BRCCommon.cginc"
             #include "UnityCG.cginc"
@@ -82,9 +74,7 @@ Shader "LD CrewBoom/Environment"
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color * BRCLighting;
                 fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb;
                 col.rgb += emissionCol.rgb;
-                #if _TRANSPARENCY_CUTOUT
-                    clip(col.a - _CutOut);
-                #endif
+                clip(col.a - _CutOut);
                 return col;
             }
             ENDCG
@@ -94,11 +84,9 @@ Shader "LD CrewBoom/Environment"
             Tags {"LightMode" = "ShadowCaster"}
 
             CGPROGRAM
-            #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT _TRANSPARENCY_TRANSPARENT
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_shadowcaster
-
             #include "UnityCG.cginc"
 
                 struct appdata
@@ -127,13 +115,10 @@ Shader "LD CrewBoom/Environment"
             float4 frag(v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                #if _TRANSPARENCY_CUTOUT
-                    clip(col.a - _CutOut);
-                #endif
+                clip(col.a - _CutOut);
                 SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG
         }
     }
-    CustomEditor "EnvironmentMaterialEditor"
 }
