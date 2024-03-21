@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: super_shoes
-  m_Shader: {fileID: 4800000, guid: 8b2f353da1dd05244a7bee1562a2306a, type: 3}
-  m_ValidKeywords:
+  m_Shader: {fileID: 4800000, guid: 89fee2d46790bb64086885dc144be1a2, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _KEYWORD0_UV0
-  m_InvalidKeywords: []
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -76,13 +76,16 @@ Material:
     - _GlossyReflections: 1
     - _Keyword0: 0
     - _MaxDistanceFromCamera: 50
+    - _MaxOutlineSize: 0.008
     - _MaxOutlineWidth: 0.05
     - _Metallic: 0
     - _MinDistanceFromCamera: 0.1
+    - _MinOutlineSize: 0.002
     - _MinOutlineWidth: 0.0025
     - _Mode: 0
     - _MultiplyEmissiveWithNdotL: 0
     - _OcclusionStrength: 1
+    - _OutlineMultiplier: 0.005
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -93,4 +96,5 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
