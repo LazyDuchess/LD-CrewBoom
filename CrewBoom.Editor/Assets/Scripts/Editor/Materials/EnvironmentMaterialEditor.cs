@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System.Linq;
-using System.Xml.Schema;
 
 // Custom Inspector for the BRC Environment material.
 public class EnvironmentMaterialEditor : ShaderGUI
