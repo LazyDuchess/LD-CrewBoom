@@ -7,9 +7,19 @@ Shader "LD CrewBoom/Environment"
         [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Blend mode Source", Int) = 1
         [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Blend mode Destination", Int) = 0
         [HideInInspector] _ZWrite ("ZWrite", Float) = 1.0
-        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2.0
         [HideInInspector] [KeywordEnum(Opaque, Cutout, Transparent)] _Transparency ("Transparency", Float) = 0
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
+
+        [HideInInspector] [Toggle] _MainTexScroll ("Scroll", Float) = 0
+        [HideInInspector] [Toggle] _EmissionScroll ("Scroll", Float) = 0
+
+        [HideInInspector] _MainTexUSpeed ("U Speed", Float) = 0
+        [HideInInspector] _MainTexVSpeed ("V Speed", Float) = 0
+
+        [HideInInspector] _EmissionUSpeed ("U Speed", Float) = 0
+        [HideInInspector] _EmissionVSpeed ("V Speed", Float) = 0
+
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
@@ -27,6 +37,8 @@ Shader "LD CrewBoom/Environment"
             Tags {"LightMode" = "ForwardBase"}
             CGPROGRAM
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT _TRANSPARENCY_TRANSPARENT
+            #pragma shader_feature _MAINTEXSCROLL_ON
+            #pragma shader_feature _EMISSIONSCROLL_ON
             #pragma vertex vert
             #pragma fragment frag
             
@@ -63,6 +75,14 @@ Shader "LD CrewBoom/Environment"
             sampler2D _Emission;
             float4 _Emission_ST;
             float4 _Color;
+            #if _MAINTEXSCROLL_ON
+            float _MainTexUSpeed;
+            float _MainTexVSpeed;
+            #endif
+            #if _EMISSIONSCROLL_ON
+            float _EmissionUSpeed;
+            float _EmissionVSpeed;
+            #endif
 
             v2f vert (appdata v)
             {
@@ -70,6 +90,12 @@ Shader "LD CrewBoom/Environment"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv2 = TRANSFORM_TEX(v.uv, _Emission);
+                #if _MAINTEXSCROLL_ON
+                o.uv += float2(_MainTexUSpeed, _MainTexVSpeed) * _Time;
+                #endif
+                #if _EMISSIONSCROLL_ON
+                o.uv2 += float2(_EmissionUSpeed, _EmissionVSpeed) * _Time;
+                #endif
                 o.normal = UnityObjectToWorldNormal(v.normal);
                 o.color = v.color * _Color;
                 TRANSFER_SHADOW(o)
