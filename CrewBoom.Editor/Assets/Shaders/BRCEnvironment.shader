@@ -10,6 +10,8 @@ Shader "LD CrewBoom/Environment"
         [HideInInspector] [KeywordEnum(Opaque, Cutout, Transparent)] _Transparency ("Transparency", Float) = 0
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
 
+        [HideInInspector] [KeywordEnum(UV0, UV1)] _MainTexUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1)] _EmissionUV ("UV Map", Float) = 0
         [HideInInspector] [Toggle] _MainTexScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionScroll ("Scroll", Float) = 0
 
@@ -39,6 +41,8 @@ Shader "LD CrewBoom/Environment"
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT _TRANSPARENCY_TRANSPARENT
             #pragma shader_feature _MAINTEXSCROLL_ON
             #pragma shader_feature _EMISSIONSCROLL_ON
+            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1
+            #pragma shader_feature _EMISSIONUV_UV0 _EMISSIONUV_UV1
             #pragma vertex vert
             #pragma fragment frag
             
@@ -55,6 +59,7 @@ Shader "LD CrewBoom/Environment"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
                 float3 normal : NORMAL;
                 float4 color : COLOR0;
             };
@@ -88,8 +93,21 @@ Shader "LD CrewBoom/Environment"
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
+
+                #if _MAINTEXUV_UV0
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                #endif
+                #if _MAINTEXUV_UV1
+                o.uv = TRANSFORM_TEX(v.uv1, _MainTex);
+                #endif
+
+                #if _EMISSIONUV_UV0
                 o.uv2 = TRANSFORM_TEX(v.uv, _Emission);
+                #endif
+                #if _EMISSIONUV_UV1
+                o.uv2 = TRANSFORM_TEX(v.uv1, _Emission);
+                #endif
+
                 #if _MAINTEXSCROLL_ON
                 o.uv += float2(_MainTexUSpeed, _MainTexVSpeed) * _Time;
                 #endif

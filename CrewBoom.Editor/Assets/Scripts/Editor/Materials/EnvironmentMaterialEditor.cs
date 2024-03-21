@@ -59,9 +59,11 @@ public class EnvironmentMaterialEditor : ShaderGUI
             materialEditor.ShaderProperty(property, property.displayName);
             if (property.name == "_MainTex" || property.name == "_Emission")
             {
+                var uvProperty = ShaderGUI.FindProperty($"{property.name}UV", properties);
                 var scrollProperty = ShaderGUI.FindProperty($"{property.name}Scroll", properties);
                 var uProperty = ShaderGUI.FindProperty($"{property.name}USpeed", properties);
                 var vProperty = ShaderGUI.FindProperty($"{property.name}VSpeed", properties);
+                materialEditor.ShaderProperty(uvProperty, uvProperty.displayName);
                 materialEditor.ShaderProperty(scrollProperty, scrollProperty.displayName);
                 if (scrollProperty.floatValue == 1f)
                 {
