@@ -52,7 +52,7 @@ public class CharacterDefinitionEditor : Editor
 
     private Texture _errorIcon;
 
-    private bool _showBundleProperties = false;
+    private bool _showBundleProperties = true;
     private GUIContent _bundleProperties;
     private bool _showCharacterProperties = true;
     private GUIContent _characterProperties;
