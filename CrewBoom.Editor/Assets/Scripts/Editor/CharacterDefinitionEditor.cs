@@ -647,7 +647,7 @@ public class CharacterDefinitionEditor : Editor
 
                 EditorGUILayout.Space();
 
-                if (GUILayout.Button("Use Game Shader on all Outfits"))
+                if (GUILayout.Button("Use Game Shader on all Materials"))
                 {
                     for(var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
                     {
@@ -661,7 +661,7 @@ public class CharacterDefinitionEditor : Editor
                     }
                 }
 
-                if (GUILayout.Button("Uso Custom Shaders on all Outfits"))
+                if (GUILayout.Button("Uso Custom Shaders on all Materials"))
                 {
                     for (var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
                     {
