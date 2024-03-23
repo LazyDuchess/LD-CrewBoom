@@ -4,9 +4,71 @@ using UnityEditor;
 // Custom Inspector for the BRC Character material.
 public class CharacterMaterialEditor : ShaderGUI
 {
+    private enum Transparency
+    {
+        Opaque,
+        Cutout
+    }
+
+    public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
+    {
+        base.AssignNewShaderToMaterial(material, oldShader, newShader);
+        ValidateNewShader(material);
+    }
+
+    // Validate some properties after changing values in the inspector.
+    public override void ValidateMaterial(Material material)
+    {
+        base.ValidateMaterial(material);
+        var materials = new Material[] { material };
+        var properties = MaterialEditor.GetMaterialProperties(materials);
+        var transparencyProperty = ShaderGUI.FindProperty("_Transparency", properties);
+        ValidateTransparency(properties, material, (Transparency)transparencyProperty.floatValue);
+    }
+
+    private void ValidateNewShader(Material material)
+    {
+        var materials = new Material[] { material };
+        var properties = MaterialEditor.GetMaterialProperties(materials);
+        var transparencyProperty = ShaderGUI.FindProperty("_Transparency", properties);
+        ValidateTransparency(properties, material, (Transparency)transparencyProperty.floatValue);
+        ValidateRenderQueue(properties, material, (Transparency)transparencyProperty.floatValue);
+    }
+
     // Draw the inspector.
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
     {
+        var transparencyProperty = ShaderGUI.FindProperty("_Transparency", properties);
+
+        var cutoutProperty = ShaderGUI.FindProperty("_CutOut", properties);
+
+        var material = materialEditor.target as Material;
+
+        var transparencyOptions = new string[]
+        {
+            "Opaque",
+            "Cutout"
+        };
+
+        var transparencyMode = (Transparency)transparencyProperty.floatValue;
+
+        // If the transparency mode is changed automatically adjust the Render Queue.
+        EditorGUI.BeginChangeCheck();
+        {
+            transparencyMode = (Transparency)EditorGUILayout.Popup("Render Mode", (int)transparencyMode, transparencyOptions);
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            transparencyProperty.floatValue = (float)transparencyMode;
+            ValidateRenderQueue(properties, material, transparencyMode);
+        }
+
+        // Display the alpha cutout slider if appropriate.
+        if (transparencyMode == Transparency.Cutout)
+        {
+            materialEditor.ShaderProperty(cutoutProperty, cutoutProperty.displayName);
+        }
+
         foreach (var property in properties)
         {
             if ((property.flags & MaterialProperty.PropFlags.HideInInspector) == MaterialProperty.PropFlags.HideInInspector)
@@ -35,6 +97,36 @@ public class CharacterMaterialEditor : ShaderGUI
             }
         }
         materialEditor.RenderQueueField();
-        //base.OnGUI(materialEditor, properties);
+    }
+
+    private void ValidateTransparency(MaterialProperty[] properties, Material material, Transparency transparency)
+    {
+        material.DisableKeyword("_TRANSPARENCY_OPAQUE");
+        material.DisableKeyword("_TRANSPARENCY_CUTOUT");
+
+        switch (transparency)
+        {
+            case Transparency.Opaque:
+                material.EnableKeyword("_TRANSPARENCY_OPAQUE");
+                break;
+
+            case Transparency.Cutout:
+                material.EnableKeyword("_TRANSPARENCY_CUTOUT");
+                break;
+        }
+    }
+
+    private void ValidateRenderQueue(MaterialProperty[] properties, Material material, Transparency transparency)
+    {
+        switch (transparency)
+        {
+            case Transparency.Opaque:
+                material.renderQueue = 2000;
+                break;
+
+            case Transparency.Cutout:
+                material.renderQueue = 2450;
+                break;
+        }
     }
 }
