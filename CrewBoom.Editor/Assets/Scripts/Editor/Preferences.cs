@@ -9,6 +9,8 @@ public static class Preferences
 {
     private const string RegistryKey = @"HKEY_CURRENT_USER\Software\LDCrewBoom\CrewBoom";
     private const string RegistryValueAuthorName = "AuthorName";
+    private const string RegistryValueCopyBundles = "CopyBundles";
+    private const string RegistryValueTargetBundlePath = "TargetBundlePath";
     public static string AuthorName
     {
         get
@@ -18,6 +20,30 @@ public static class Preferences
         set
         {
             Registry.SetValue(RegistryKey, RegistryValueAuthorName, value);
+        }
+    }
+
+    public static bool CopyBundles
+    {
+        get
+        {
+            return Registry.GetValue(RegistryKey, RegistryValueCopyBundles, "false") as string == "true" ? true : false;
+        }
+        set
+        {
+            Registry.SetValue(RegistryKey, RegistryValueCopyBundles, value == true ? "true" : "false");
+        }
+    }
+
+    public static string TargetBundlePath
+    {
+        get
+        {
+            return Registry.GetValue(RegistryKey, RegistryValueTargetBundlePath, "") as string;
+        }
+        set
+        {
+            Registry.SetValue(RegistryKey, RegistryValueTargetBundlePath, value);
         }
     }
 }

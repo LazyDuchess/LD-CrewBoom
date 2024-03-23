@@ -20,6 +20,7 @@ public class PreferencesWindow : EditorWindow
 
     private void OnGUI()
     {
+        EditorGUIUtility.labelWidth = 300;
         var header = new GUIStyle();
         header.fontSize = 16;
         header.fontStyle = FontStyle.Bold;
@@ -30,6 +31,27 @@ public class PreferencesWindow : EditorWindow
         if (author != currentAuthor)
             Preferences.AuthorName = author;
         EditorGUILayout.HelpBox("Your author name will be prefixed to character bundle filenames.", MessageType.Info);
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.BeginVertical("box");
+        var currentCopyBundles = Preferences.CopyBundles;
+        var copyBundles = EditorGUILayout.Toggle("Copy Character Bundles on Build", currentCopyBundles);
+        if (copyBundles != currentCopyBundles)
+            Preferences.CopyBundles = copyBundles;
+        GUI.enabled = copyBundles;
+        EditorGUILayout.BeginHorizontal();
+        var currentTargetBundlePath = Preferences.TargetBundlePath;
+        var targetBundlePath = EditorGUILayout.TextField(currentTargetBundlePath);
+        if (targetBundlePath != currentTargetBundlePath)
+            Preferences.TargetBundlePath = targetBundlePath;
+        if (GUILayout.Button("Browse"))
+        {
+            var folder = EditorUtility.OpenFolderPanel("Browse folder", "", "");
+            if (!string.IsNullOrEmpty(folder))
+                Preferences.TargetBundlePath = folder;
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.HelpBox("If the directory exists, character bundles will be automatically copied to this location on build.", MessageType.Info);
+        GUI.enabled = true;
         EditorGUILayout.EndVertical();
     }
 }
