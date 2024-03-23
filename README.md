@@ -3,6 +3,7 @@ This Repository is a custom fork of the [CrewBoom Unity Project](https://github.
 
 ## Features
 * Stubbed Dynamic Bones scripts are included.
+* Bundle names are editable and author name prefixed to avoid conflicts.
 * GUIDs for custom characters are editable and stay the same unless changed. This allows you to update custom characters without generating a new GUID each time.
 * Quality of Life improvements.
 * Customizable recreations of BRC shaders are included. These can be used in place of the Game Shaders.
