@@ -1083,6 +1083,8 @@ MonoBehaviour:
   m_Script: {fileID: -2057371607, guid: c08f7323211fb684dbfca4c932627286, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OverrideBundleFilename: 0
+  BundleFilename: Sonic
   CharacterName: Sonic
   FreestyleAnimation: 3
   BounceAnimation: 3

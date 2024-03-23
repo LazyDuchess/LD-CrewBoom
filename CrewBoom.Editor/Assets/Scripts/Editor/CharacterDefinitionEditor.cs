@@ -32,7 +32,9 @@ public class CharacterDefinitionEditor : Editor
     private SerializedProperty _voiceGetHit;
     private SerializedProperty _voiceJump;
     private SerializedProperty _characterCanBlink;
-    private SerializedProperty _characterId;
+    private SerializedProperty _bundleId;
+    private SerializedProperty _bundleOverrideFilename;
+    private SerializedProperty _bundleFilename;
 
     private const int OUTFIT_AMOUNT = 4;
     private bool[][] _materialFoldouts;
@@ -50,6 +52,8 @@ public class CharacterDefinitionEditor : Editor
 
     private Texture _errorIcon;
 
+    private bool _showBundleProperties = false;
+    private GUIContent _bundleProperties;
     private bool _showCharacterProperties = true;
     private GUIContent _characterProperties;
     private bool _showRigProperties = true;
@@ -107,7 +111,9 @@ public class CharacterDefinitionEditor : Editor
         _voiceGetHit = serializedObject.FindProperty(nameof(CharacterDefinition.VoiceGetHit));
         _voiceJump = serializedObject.FindProperty(nameof(CharacterDefinition.VoiceJump));
         _characterCanBlink = serializedObject.FindProperty(nameof(CharacterDefinition.CanBlink));
-        _characterId = serializedObject.FindProperty(nameof(CharacterDefinition.Id));
+        _bundleId = serializedObject.FindProperty(nameof(CharacterDefinition.Id));
+        _bundleOverrideFilename = serializedObject.FindProperty(nameof(CharacterDefinition.OverrideBundleFilename));
+        _bundleFilename = serializedObject.FindProperty(nameof(CharacterDefinition.BundleFilename));
 
         _invalidMessage = EditorGUIUtility.IconContent("Invalid@2x");
         _invalidMessage.text = "Character is not valid and can not be built.";
@@ -121,6 +127,9 @@ public class CharacterDefinitionEditor : Editor
         _shaderToggleContent.text = "Use game shader";
         _shaderToggleContent.tooltip = "On - Uses the shader the game uses for characters for the ouftits.\nOff - Uses the shader applied to the material (Custom shaders).";
 
+        _bundleProperties = new GUIContent();
+        _bundleProperties.image = EditorGUIUtility.IconContent("d_CustomTool").image;
+        _bundleProperties.text = " Bundle Properties";
         _characterProperties = EditorGUIUtility.IconContent("d_CustomTool");
         _characterProperties.text = " Character Properties";
         _rigProperties = EditorGUIUtility.IconContent("AvatarSelector");
@@ -530,20 +539,34 @@ public class CharacterDefinitionEditor : Editor
             EditorGUILayout.Space();
         }
 
-        GUILayout.BeginVertical(_characterProperties, _propertyWindowStyle);
+        GUILayout.BeginVertical(_bundleProperties, _propertyWindowStyle);
         {
             EditorGUI.indentLevel++;
-            _showCharacterProperties = EditorGUILayout.Foldout(_showCharacterProperties, _showCharacterProperties ? string.Empty : "Click to show", true, _hiddenFoldoutStyle);
+            _showBundleProperties = EditorGUILayout.Foldout(_showBundleProperties, _showBundleProperties ? string.Empty : "Click to show", true, _hiddenFoldoutStyle);
             EditorGUI.indentLevel--;
 
-            if (_showCharacterProperties)
+            if (_showBundleProperties)
             {
-                EditorGUILayout.PropertyField(_characterId, new GUIContent("GUID"));
-                if (string.IsNullOrEmpty(_characterId.stringValue))
+                EditorGUILayout.PropertyField(_bundleOverrideFilename, new GUIContent("Override Bundle Filename"));
+                GUI.enabled = _bundleOverrideFilename.boolValue;
+                if (!_bundleOverrideFilename.boolValue)
+                {
+                    var builderFilename = CustomCharacterBundleBuilder.GetBundleFilename(target as CharacterDefinition);
+                    if (_bundleFilename.stringValue != builderFilename)
+                        _bundleFilename.stringValue = builderFilename;
+                }
+                EditorGUILayout.PropertyField(_bundleFilename, new GUIContent("Bundle Filename"));
+                GUI.enabled = true;
+                EditorGUILayout.HelpBox($"The filename of the character bundle will be \"{CustomCharacterBundleBuilder.GetBundleFilenameWithExtension(target as CharacterDefinition)}\"", MessageType.Info);
+
+                EditorGUILayout.Separator();
+
+                EditorGUILayout.PropertyField(_bundleId, new GUIContent("GUID"));
+                if (string.IsNullOrEmpty(_bundleId.stringValue))
                 {
                     EditorGUILayout.HelpBox("A GUID will be generated on build.", MessageType.Warning);
                 }
-                else if (!Guid.TryParse(_characterId.stringValue, out var _))
+                else if (!Guid.TryParse(_bundleId.stringValue, out var _))
                 {
                     EditorGUILayout.HelpBox("GUID is invalid.", MessageType.Error);
                     allValid = false;
@@ -553,8 +576,20 @@ public class CharacterDefinitionEditor : Editor
                     EditorGUILayout.HelpBox("The GUID is your character's unique identifier.", MessageType.Info);
                 }
                 if (GUILayout.Button("Generate New GUID"))
-                    _characterId.stringValue = Guid.NewGuid().ToString();
+                    _bundleId.stringValue = Guid.NewGuid().ToString();
                 serializedObject.ApplyModifiedProperties();
+            }
+        }
+        GUILayout.EndVertical();
+
+        GUILayout.BeginVertical(_characterProperties, _propertyWindowStyle);
+        {
+            EditorGUI.indentLevel++;
+            _showCharacterProperties = EditorGUILayout.Foldout(_showCharacterProperties, _showCharacterProperties ? string.Empty : "Click to show", true, _hiddenFoldoutStyle);
+            EditorGUI.indentLevel--;
+
+            if (_showCharacterProperties)
+            {
                 EditorGUILayout.PropertyField(_characterName, new GUIContent("Name"));
                 serializedObject.ApplyModifiedProperties();
                 BrcCharacter previousFreestyle = _targetDefinition.FreestyleAnimation;

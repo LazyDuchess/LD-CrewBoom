@@ -11,6 +11,18 @@ public static class CustomCharacterBundleBuilder
 {
     public const string BUNDLE_OUTPUT_FOLDER = "CharacterBundles";
 
+    public static string GetBundleFilename(CharacterDefinition character)
+    {
+        if (character.OverrideBundleFilename && !string.IsNullOrWhiteSpace(character.BundleFilename))
+            return character.BundleFilename;
+        return character.CharacterName;
+    }
+
+    public static string GetBundleFilenameWithExtension(CharacterDefinition character)
+    {
+        return $"{GetBundleFilename(character)}.cbb";
+    }
+
     public static void BuildBundle(GameObject prefab)
     {
         if (!EditorUtility.IsPersistent(prefab))
@@ -38,7 +50,7 @@ public static class CustomCharacterBundleBuilder
         List<AssetBundleBuild> assetBundleDefinitionList = new();
 
         AssetBundleBuild build = new AssetBundleBuild();
-        build.assetBundleName = $"{definition.CharacterName}.cbb";
+        build.assetBundleName = GetBundleFilenameWithExtension(definition);
 
         string pathToAsset = AssetDatabase.GetAssetPath(prefab);
         string fileName = Path.GetFileName(pathToAsset);
