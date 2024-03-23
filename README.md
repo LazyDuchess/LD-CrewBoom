@@ -7,6 +7,7 @@ This Repository is a custom fork of the [CrewBoom Unity Project](https://github.
 * Quality of Life improvements.
 * Customizable recreations of BRC shaders are included. These can be used in place of the Game Shaders.
 * Custom shaders by [Muppo](https://github.com/Muppotronic) are included.
+* Ability to update the project directly in the editor without re-downloading manually.
 
 ## Usage
 Head to the "Releases" tab to download the latest version. You'll be able to use this as a replacement for the CrewBoom Unity Project.
