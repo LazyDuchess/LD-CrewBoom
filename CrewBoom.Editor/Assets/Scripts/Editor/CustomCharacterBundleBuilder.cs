@@ -15,7 +15,10 @@ public static class CustomCharacterBundleBuilder
     {
         if (character.OverrideBundleFilename && !string.IsNullOrWhiteSpace(character.BundleFilename))
             return character.BundleFilename;
-        return character.CharacterName;
+        var authorName = Preferences.AuthorName;
+        if (string.IsNullOrWhiteSpace(authorName))
+            return character.CharacterName;
+        return $"{authorName}.{character.CharacterName}";
     }
 
     public static string GetBundleFilenameWithExtension(CharacterDefinition character)
