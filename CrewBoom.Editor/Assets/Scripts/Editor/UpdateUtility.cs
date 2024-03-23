@@ -99,7 +99,13 @@ public class UpdateUtility
             Directory.Delete(localDirectory, true);
         }
 
-        Directory.Move(updateAssetsDirectory, "Assets");
+        var updateAssetDirectories = Directory.GetDirectories(updateAssetsDirectory);
+        foreach(var updateDirectory in updateAssetDirectories)
+        {
+            var directoryName = Path.GetFileName(updateDirectory);
+            Directory.Move(updateDirectory, Path.Combine("Assets", directoryName));
+        }
+        Directory.Delete(TempDirectory);
     }
 
     private static VersionCompareResult CompareVersionToCurrent(string version)
