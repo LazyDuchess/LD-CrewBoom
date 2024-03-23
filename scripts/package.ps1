@@ -5,6 +5,10 @@ $PSNativeCommandUseErrorActionPreference = $true
 Set-Location $PSScriptRoot/..
 [Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
 
+$csprojPath = "CrewBoom.Mono/CrewBoom.Mono.csproj"
+$projxml = [xml](Get-Content -Path $csprojPath)
+$version = $projxml.Project.PropertyGroup[0].Version
+
 function EnsureDir($path) {
     if(!(Test-Path $path)) { New-Item -Type Directory $path > $null }
 }
@@ -30,7 +34,7 @@ function AddToZip($zip, $path, $pathInZip=$path) {
     [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $path, $pathInZip) > $Null
 }
 
-$projectZipPath = "Build/CrewBoom.Editor.zip"
+$projectZipPath = "Build/CrewBoom.Editor-$version.zip"
 
 function CreateProjectZip(){
     $zip = CreateZip $projectZipPath
