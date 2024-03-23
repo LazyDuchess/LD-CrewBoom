@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor;
 
 public static class Preferences
 {
@@ -11,6 +12,7 @@ public static class Preferences
     private const string RegistryValueAuthorName = "AuthorName";
     private const string RegistryValueCopyBundles = "CopyBundles";
     private const string RegistryValueTargetBundlePath = "TargetBundlePath";
+    private const string RegistryValueOpenFileExplorerOnBuild = "OpenFileExplorerOnBuild";
     public static string AuthorName
     {
         get
@@ -27,7 +29,7 @@ public static class Preferences
     {
         get
         {
-            return Registry.GetValue(RegistryKey, RegistryValueCopyBundles, "false") as string == "true" ? true : false;
+            return Registry.GetValue(RegistryKey, RegistryValueCopyBundles, "false") as string == "true";
         }
         set
         {
@@ -44,6 +46,18 @@ public static class Preferences
         set
         {
             Registry.SetValue(RegistryKey, RegistryValueTargetBundlePath, value);
+        }
+    }
+
+    public static bool OpenFileExplorerOnBuild
+    {
+        get
+        {
+            return Registry.GetValue(RegistryKey, RegistryValueOpenFileExplorerOnBuild, "true") as string == "true";
+        }
+        set
+        {
+            Registry.SetValue(RegistryKey, RegistryValueOpenFileExplorerOnBuild, value == true ? "true" : "false");
         }
     }
 }

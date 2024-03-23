@@ -12,5 +12,6 @@ public class UpdateUtility
         var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", "Are you sure? Any assets not in the Characters folder might be deleted!", "Yes", "Cancel");
         if (!updateConfirmation)
             return;
+
     }
 }

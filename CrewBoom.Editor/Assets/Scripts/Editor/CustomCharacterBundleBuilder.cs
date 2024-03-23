@@ -119,7 +119,8 @@ public static class CustomCharacterBundleBuilder
                 Debug.Log($"Size of AssetBundle {projectRelativePath} is {new FileInfo(projectRelativePath).Length * 0.0009765625} KB");
 
                 Debug.Log($"Built character bundle for {definition.CharacterName} with GUID {id}");
-                EditorUtility.RevealInFinder(projectRelativePath);
+                if (Preferences.OpenFileExplorerOnBuild)
+                    EditorUtility.RevealInFinder(projectRelativePath);
 
                 if (Preferences.CopyBundles)
                 {
@@ -131,7 +132,8 @@ public static class CustomCharacterBundleBuilder
                         {
                             File.Copy(projectRelativePath, targetBundle, true);
                             File.Copy(jsonPath, Path.Combine(targetDirectory, Path.GetFileName(jsonPath)), true);
-                            EditorUtility.RevealInFinder(targetBundle);
+                            if (Preferences.OpenFileExplorerOnBuild)
+                                EditorUtility.RevealInFinder(targetBundle);
                         }
                         catch (IOException e)
                         {

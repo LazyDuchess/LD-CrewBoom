@@ -11,7 +11,7 @@ public class PreferencesWindow : EditorWindow
     {
         var window = GetWindow<PreferencesWindow>();
         window.titleContent = new GUIContent("CrewBoom Preferences");
-        window.maxSize = new Vector2(1200.0f, 235.0f);
+        window.maxSize = new Vector2(1200.0f, 255.0f);
         window.minSize = new Vector2(600.0f, window.maxSize.y);
     }
 
@@ -55,6 +55,10 @@ public class PreferencesWindow : EditorWindow
         EditorGUILayout.HelpBox("If the directory exists, character bundles will be automatically copied to this location on build.", MessageType.Info);
         GUI.enabled = true;
         EditorGUILayout.EndVertical();
+        var currentOpenFileExplorer = Preferences.OpenFileExplorerOnBuild;
+        var openFileExplorer = EditorGUILayout.Toggle("Open File Explorer on Build", currentOpenFileExplorer);
+        if (openFileExplorer != currentOpenFileExplorer)
+            Preferences.OpenFileExplorerOnBuild = openFileExplorer;
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField($"LD CrewBoom Version: {CrewBoomVersion.Version}");
         if (GUILayout.Button("Update"))
