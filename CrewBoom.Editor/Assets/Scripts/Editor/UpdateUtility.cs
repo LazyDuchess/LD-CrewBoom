@@ -31,6 +31,7 @@ public class UpdateUtility
         try
         {
             var request = UnityWebRequest.Get(VersionRequestURL);
+            Log("Fetching latest version...");
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.Success)
             {
@@ -40,18 +41,33 @@ public class UpdateUtility
                 var comparison = CompareVersionToCurrent(latestVersion);
                 if (comparison == VersionCompareResult.Higher)
                 {
-                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {latestVersion}? Any assets not in the Characters folder might be deleted!", "Yes", "Cancel");
+                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {latestVersion}?\n\nAny assets not in the Characters folder might be deleted!", "Yes", "Cancel");
                     if (!updateConfirmation)
                         yield break;
                 }
                 else
                 {
-                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"You are already on the newest version. Repair? Any assets not in the Characters folder might be deleted!", "Yes", "Cancel");
+                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"You are already on the newest version. Repair?\n\nAny assets not in the Characters folder might be deleted!", "Yes", "Cancel");
                     if (!updateConfirmation)
                         yield break;
                 }
-                var zipUrl = string.Format(DownloadURL, release.tag_name, release.assets[0].name);
+                GithubAsset zipAsset = null;
+                foreach(var asset in release.assets)
+                {
+                    if (asset.name.ToLowerInvariant().StartsWith("crewboom.editor"))
+                    {
+                        zipAsset = asset;
+                        break;
+                    }    
+                }
+                if (zipAsset == null)
+                {
+                    EditorUtility.DisplayDialog("Update CrewBoom", "Failed to fetch zip file in latest release.", "OK");
+                    yield break;
+                }
+                var zipUrl = string.Format(DownloadURL, release.tag_name, zipAsset.name);
                 request = UnityWebRequest.Get(zipUrl);
+                Log("Downloading latest version...");
                 yield return request.SendWebRequest();
                 if (request.result == UnityWebRequest.Result.Success)
                 {
@@ -65,6 +81,7 @@ public class UpdateUtility
                     }
                     zip.ExtractToDirectory(TempDirectory);
                     ApplyUpdate();
+                    Log("Updated!");
                 }
                 else
                 {
@@ -80,6 +97,11 @@ public class UpdateUtility
         {
             Busy = false;
         }
+    }
+
+    private static void Log(string text)
+    {
+        Debug.Log(text);
     }
 
     private static void ApplyUpdate()
@@ -106,6 +128,7 @@ public class UpdateUtility
             Directory.Move(updateDirectory, Path.Combine("Assets", directoryName));
         }
         Directory.Delete(TempDirectory);
+        AssetDatabase.Refresh();
     }
 
     private static VersionCompareResult CompareVersionToCurrent(string version)
