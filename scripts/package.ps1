@@ -66,4 +66,5 @@ function CreateProjectZip(){
 
 Clean
 EnsureDir "Build"
+dotnet build -c Release
 CreateProjectZip
