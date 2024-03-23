@@ -53,5 +53,9 @@ public class PreferencesWindow : EditorWindow
         EditorGUILayout.HelpBox("If the directory exists, character bundles will be automatically copied to this location on build.", MessageType.Info);
         GUI.enabled = true;
         EditorGUILayout.EndVertical();
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField($"LD CrewBoom Version: {CrewBoomVersion.Version}");
+        if (GUILayout.Button("Update"))
+            UpdateUtility.UpdateCrewBoom();
     }
 }

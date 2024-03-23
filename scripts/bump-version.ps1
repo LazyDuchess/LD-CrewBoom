@@ -75,6 +75,17 @@ Write-Host "Bumping from $oldVersion to $newVersion"
 $projxml.Project.PropertyGroup.Version = $newVersion
 $projxml.Save($csprojPath)
 
+$editorVersionCSPath = "CrewBoom.Editor/Assets/Scripts/Editor/CrewBoomVersion.cs"
+
+$versionString = '
+public static class CrewBoomVersion
+{
+    public const string Version = "'+$newVersion+'";
+}
+'
+
+Out-File -FilePath $editorVersionCSPath -InputObject $versionString
+
 Write-Host "Bumped all versions!"
 
 if($nogit){
