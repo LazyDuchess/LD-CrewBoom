@@ -14,14 +14,24 @@ public static class CustomCharacterBundleBuilder
     public static string GetBundleFilename(CharacterDefinition character)
     {
         if (character.OverrideBundleFilename && !string.IsNullOrWhiteSpace(character.BundleFilename))
-            return character.BundleFilename;
+            return SanitizeFilename(character.BundleFilename);
         var authorName = Preferences.AuthorName;
         if (string.IsNullOrWhiteSpace(authorName))
-            return character.CharacterName;
-        return $"{authorName}.{character.CharacterName}";
+            return SanitizeFilename(character.CharacterName);
+        return SanitizeFilename($"{authorName}.{character.CharacterName}");
     }
 
-    public static string GetBundleFilenameWithExtension(CharacterDefinition character)
+    private static string SanitizeFilename(string filename)
+    {
+        var invalidFilenameChars = Path.GetInvalidFileNameChars();
+        foreach(var invalidChar in invalidFilenameChars)
+        {
+            filename = filename.Replace(invalidChar.ToString(), "");
+        }
+        return filename;
+    }
+
+    public static string GetFinalBundleFilename(CharacterDefinition character)
     {
         return $"{GetBundleFilename(character)}.cbb";
     }
@@ -53,7 +63,7 @@ public static class CustomCharacterBundleBuilder
         List<AssetBundleBuild> assetBundleDefinitionList = new();
 
         AssetBundleBuild build = new AssetBundleBuild();
-        build.assetBundleName = GetBundleFilenameWithExtension(definition);
+        build.assetBundleName = GetFinalBundleFilename(definition);
 
         string pathToAsset = AssetDatabase.GetAssetPath(prefab);
         string fileName = Path.GetFileName(pathToAsset);

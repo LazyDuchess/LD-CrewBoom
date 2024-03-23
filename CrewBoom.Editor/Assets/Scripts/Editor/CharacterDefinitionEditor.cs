@@ -557,7 +557,7 @@ public class CharacterDefinitionEditor : Editor
                 }
                 EditorGUILayout.PropertyField(_bundleFilename, new GUIContent("Bundle Filename"));
                 GUI.enabled = true;
-                EditorGUILayout.HelpBox($"The filename of the character bundle will be \"{CustomCharacterBundleBuilder.GetBundleFilenameWithExtension(target as CharacterDefinition)}\"", MessageType.Info);
+                EditorGUILayout.HelpBox($"The filename of the character bundle will be \"{CustomCharacterBundleBuilder.GetFinalBundleFilename(target as CharacterDefinition)}\"", MessageType.Info);
 
                 EditorGUILayout.Separator();
 

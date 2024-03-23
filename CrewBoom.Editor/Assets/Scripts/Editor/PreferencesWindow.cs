@@ -45,7 +45,7 @@ public class PreferencesWindow : EditorWindow
             Preferences.TargetBundlePath = targetBundlePath;
         if (GUILayout.Button("Browse"))
         {
-            var folder = EditorUtility.OpenFolderPanel("Browse folder", "", "");
+            var folder = EditorUtility.OpenFolderPanel("Browse folder", Preferences.TargetBundlePath, "");
             if (!string.IsNullOrEmpty(folder))
                 Preferences.TargetBundlePath = folder;
         }
