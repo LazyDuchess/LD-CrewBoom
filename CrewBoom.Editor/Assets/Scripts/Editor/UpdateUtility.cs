@@ -23,7 +23,7 @@ public class UpdateUtility
     private const string VersionRequestURL = "https://api.github.com/repos/LazyDuchess/LD-CrewBoom/releases/latest";
     private const string DownloadURL = "https://github.com/LazyDuchess/LD-CrewBoom/releases/download/{0}/{1}";
     private const string TempDirectory = "UpdateTemp";
-    private const string AssetFoldersWarning = @"Any assets not in the following folders may be deleted:
+    private const string AssetFoldersWarning = @"Personal assets not in the following folders may be deleted:
 
 Assets/Characters
 Assets/User";
