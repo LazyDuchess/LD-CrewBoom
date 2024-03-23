@@ -8,6 +8,7 @@ using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 using System.IO;
 using System.IO.Compression;
+using System;
 
 public class UpdateUtility
 {
@@ -21,6 +22,7 @@ public class UpdateUtility
     }
     private const string VersionRequestURL = "https://api.github.com/repos/LazyDuchess/LD-CrewBoom/releases/latest";
     private const string DownloadURL = "https://github.com/LazyDuchess/LD-CrewBoom/releases/download/{0}/{1}";
+    private const string TempDirectory = "UpdateTemp";
     public static IEnumerator UpdateCrewBoom()
     {
         if (Busy)
@@ -48,7 +50,26 @@ public class UpdateUtility
                     if (!updateConfirmation)
                         yield break;
                 }
-                UpdateToZip(string.Format(DownloadURL, release.tag_name, release.assets[0].name));
+                var zipUrl = string.Format(DownloadURL, release.tag_name, release.assets[0].name);
+                request = UnityWebRequest.Get(zipUrl);
+                yield return request.SendWebRequest();
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    var zipbody = request.downloadHandler.data;
+                    var stream = new MemoryStream(zipbody);
+                    var zip = new ZipArchive(stream);
+                    if (Directory.Exists(TempDirectory))
+                    {
+                        Directory.Delete(TempDirectory, true);
+                        Directory.CreateDirectory(TempDirectory);
+                    }
+                    zip.ExtractToDirectory(TempDirectory);
+                    ApplyUpdate();
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("Update CrewBoom", "Failed to download latest version.", "OK");
+                }
             }
             else
             {
@@ -61,20 +82,24 @@ public class UpdateUtility
         }
     }
 
-    private static IEnumerator UpdateToZip(string zipUrl)
+    private static void ApplyUpdate()
     {
-        var request = UnityWebRequest.Get(zipUrl);
-        yield return request.SendWebRequest();
-        if (request.result == UnityWebRequest.Result.Success)
+        var updateAssetsDirectory = Path.Combine(TempDirectory, "Assets");
+        var updateCharactersDirectory = Path.Combine(updateAssetsDirectory, "Characters");
+
+        if (Directory.Exists(updateCharactersDirectory))
+            Directory.Delete(updateCharactersDirectory, true);
+
+        var localAssetDirectories = Directory.GetDirectories("Assets");
+        foreach(var localDirectory in localAssetDirectories)
         {
-            var body = request.downloadHandler.data;
-            var stream = new MemoryStream(body);
-            var zip = new ZipArchive(stream);
+            var directoryName = Path.GetFileName(localDirectory);
+            if (directoryName.ToLowerInvariant().Trim() == "characters")
+                continue;
+            Directory.Delete(localDirectory, true);
         }
-        else
-        {
-            EditorUtility.DisplayDialog("Update CrewBoom", "Failed to download latest version.", "OK");
-        }
+
+        Directory.Move(updateAssetsDirectory, "Assets");
     }
 
     private static VersionCompareResult CompareVersionToCurrent(string version)
