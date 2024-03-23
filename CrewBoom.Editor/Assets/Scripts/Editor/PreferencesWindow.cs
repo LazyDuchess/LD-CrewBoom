@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Microsoft.Win32;
+using Unity.EditorCoroutines.Editor;
 
 public class PreferencesWindow : EditorWindow
 {
@@ -62,6 +63,6 @@ public class PreferencesWindow : EditorWindow
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField($"LD CrewBoom Version: {CrewBoomVersion.Version}");
         if (GUILayout.Button("Update"))
-            UpdateUtility.UpdateCrewBoom();
+            EditorCoroutineUtility.StartCoroutine(UpdateUtility.UpdateCrewBoom(), this);
     }
 }
