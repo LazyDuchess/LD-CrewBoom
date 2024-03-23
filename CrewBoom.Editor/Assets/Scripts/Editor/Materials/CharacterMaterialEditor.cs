@@ -101,6 +101,11 @@ public class CharacterMaterialEditor : ShaderGUI
 
     private void ValidateTransparency(MaterialProperty[] properties, Material material, Transparency transparency)
     {
+        if (transparency > Transparency.Cutout)
+        {
+            transparency = Transparency.Opaque;
+            ShaderGUI.FindProperty("_Transparency", properties).floatValue = (float)Transparency.Opaque;
+        }
         material.DisableKeyword("_TRANSPARENCY_OPAQUE");
         material.DisableKeyword("_TRANSPARENCY_CUTOUT");
 

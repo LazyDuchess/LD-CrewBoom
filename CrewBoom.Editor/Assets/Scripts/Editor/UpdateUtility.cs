@@ -23,6 +23,10 @@ public class UpdateUtility
     private const string VersionRequestURL = "https://api.github.com/repos/LazyDuchess/LD-CrewBoom/releases/latest";
     private const string DownloadURL = "https://github.com/LazyDuchess/LD-CrewBoom/releases/download/{0}/{1}";
     private const string TempDirectory = "UpdateTemp";
+    private const string AssetFoldersWarning = @"Any assets not in the following folders may be deleted:
+
+Assets/Characters
+Assets/User";
     public static IEnumerator UpdateCrewBoom()
     {
         if (Busy)
@@ -41,13 +45,13 @@ public class UpdateUtility
                 var comparison = CompareVersionToCurrent(latestVersion);
                 if (comparison == VersionCompareResult.Higher)
                 {
-                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {latestVersion}?\n\nAny assets not in the Characters folder might be deleted!", "Yes", "Cancel");
+                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {latestVersion}?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
                     if (!updateConfirmation)
                         yield break;
                 }
                 else
                 {
-                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"You are already on the newest version. Repair?\n\nAny assets not in the Characters folder might be deleted!", "Yes", "Cancel");
+                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"You are already on the newest version. Repair?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
                     if (!updateConfirmation)
                         yield break;
                 }
@@ -108,18 +112,31 @@ public class UpdateUtility
     {
         var updateAssetsDirectory = Path.Combine(TempDirectory, "Assets");
         var updateCharactersDirectory = Path.Combine(updateAssetsDirectory, "Characters");
+        var updateDynamicBonesDirectory = Path.Combine(updateAssetsDirectory, "Dynamic Bones");
 
         if (Directory.Exists(updateCharactersDirectory))
             Directory.Delete(updateCharactersDirectory, true);
 
+        // In case people un-stub the scripts.
+        var hasDynamicBones = false;
         var localAssetDirectories = Directory.GetDirectories("Assets");
         foreach(var localDirectory in localAssetDirectories)
         {
             var directoryName = Path.GetFileName(localDirectory);
             if (directoryName.ToLowerInvariant().Trim() == "characters")
                 continue;
+            if (directoryName.ToLowerInvariant().Trim() == "user")
+                continue;
+            if (directoryName.ToLowerInvariant().Trim() == "dynamic bones")
+            {
+                hasDynamicBones = true;
+                continue;
+            }
             Directory.Delete(localDirectory, true);
         }
+
+        if (Directory.Exists(updateDynamicBonesDirectory) && hasDynamicBones)
+            Directory.Delete(updateDynamicBonesDirectory, true);
 
         var updateAssetDirectories = Directory.GetDirectories(updateAssetsDirectory);
         foreach(var updateDirectory in updateAssetDirectories)
