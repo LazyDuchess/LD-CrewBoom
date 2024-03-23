@@ -94,6 +94,7 @@ public static class CustomCharacterBundleBuilder
                 string fileWithoutExtension = Path.GetFileNameWithoutExtension(projectRelativePath);
                 string pathWithoutExtension = Path.Combine(BUNDLE_OUTPUT_FOLDER, fileWithoutExtension);
                 string bundleManifestPath = projectRelativePath + ".manifest";
+                string jsonPath = pathWithoutExtension + ".json";
                 if (File.Exists(bundleManifestPath))
                 {
                     File.Delete(bundleManifestPath);
@@ -103,12 +104,31 @@ public static class CustomCharacterBundleBuilder
                 {
                     CharacterToReplace = nameof(BrcCharacter.None)
                 };
-                File.WriteAllText(pathWithoutExtension + ".json", JsonUtility.ToJson(config, true));
+                File.WriteAllText(jsonPath, JsonUtility.ToJson(config, true));
 
                 Debug.Log($"Size of AssetBundle {projectRelativePath} is {new FileInfo(projectRelativePath).Length * 0.0009765625} KB");
 
                 Debug.Log($"Built character bundle for {definition.CharacterName} with GUID {id}");
                 EditorUtility.RevealInFinder(projectRelativePath);
+
+                if (Preferences.CopyBundles)
+                {
+                    var targetDirectory = Preferences.TargetBundlePath;
+                    var targetBundle = Path.Combine(targetDirectory, Path.GetFileName(projectRelativePath));
+                    if (Directory.Exists(targetDirectory) && !string.IsNullOrWhiteSpace(targetDirectory))
+                    {
+                        try
+                        {
+                            File.Copy(projectRelativePath, targetBundle, true);
+                            File.Copy(jsonPath, Path.Combine(targetDirectory, Path.GetFileName(jsonPath)), true);
+                            EditorUtility.RevealInFinder(targetBundle);
+                        }
+                        catch (IOException e)
+                        {
+                            Debug.LogWarning($"Failed to copy character bundle to {targetDirectory}!{Environment.NewLine}{e}");
+                        }
+                    }
+                }
             }
 
             string manifestPath = Path.Combine(BUNDLE_OUTPUT_FOLDER, BUNDLE_OUTPUT_FOLDER);
