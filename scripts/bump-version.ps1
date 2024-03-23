@@ -43,7 +43,7 @@ $csprojPath = "CrewBoom.Mono/CrewBoom.Mono.csproj"
 
 $projxml = [xml](Get-Content -Path $csprojPath)
 
-$oldVersion = $projxml.Project.PropertyGroup[0].Version
+$oldVersion = $projxml.Project.PropertyGroup.Version
 
 $versionArray = $oldVersion.Split(".")
 
@@ -72,7 +72,7 @@ if($version){
 
 Write-Host "Bumping from $oldVersion to $newVersion"
 
-$projxml.Project.PropertyGroup[0].Version = $newVersion
+$projxml.Project.PropertyGroup.Version = $newVersion
 $projxml.Save($csprojPath)
 
 Write-Host "Bumped all versions!"

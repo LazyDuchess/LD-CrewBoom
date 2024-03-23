@@ -7,7 +7,7 @@ Set-Location $PSScriptRoot/..
 
 $csprojPath = "CrewBoom.Mono/CrewBoom.Mono.csproj"
 $projxml = [xml](Get-Content -Path $csprojPath)
-$version = $projxml.Project.PropertyGroup[0].Version
+$version = $projxml.Project.PropertyGroup.Version
 
 function EnsureDir($path) {
     if(!(Test-Path $path)) { New-Item -Type Directory $path > $null }
@@ -56,6 +56,9 @@ function CreateProjectZip(){
             $doZip = $false
         }
         if($_.FullName -like "*CrewBoom.Editor\CharacterBundles\*"){
+            $doZip = $false
+        }
+		if($_.FullName -like "*CrewBoom.Editor\Temp\*"){
             $doZip = $false
         }
         if(Test-Path -Path $_.FullName -PathType leaf){
