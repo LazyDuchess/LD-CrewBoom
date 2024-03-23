@@ -12,6 +12,8 @@
 
 # CrewBoom
 /[Cc]haracter[Bb]undles
+/Assets/Scripts/CrewBoomMono.dll
+/Assets/Scripts/CrewBoomMono.dll.meta
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

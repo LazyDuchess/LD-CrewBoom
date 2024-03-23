@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
@@ -16,4 +16,16 @@
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="CrewBoomMono.dll.meta">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CopyDLLToUnityProject" AfterTargets="AfterBuild">
+    <Message Text="Copying assembly and GUID to Unity Project" Importance="high" />
+    <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ProjectDir)..\CrewBoom.Editor\Assets\Scripts" />
+    <Copy SourceFiles="$(TargetDir)$(TargetFileName).meta" DestinationFolder="$(ProjectDir)..\CrewBoom.Editor\Assets\Scripts" />
+  </Target>
 </Project>
