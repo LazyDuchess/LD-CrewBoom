@@ -127,7 +127,7 @@ public class UpdateUtility
             var directoryName = Path.GetFileName(updateDirectory);
             Directory.Move(updateDirectory, Path.Combine("Assets", directoryName));
         }
-        Directory.Delete(TempDirectory);
+        Directory.Delete(TempDirectory, true);
         AssetDatabase.Refresh();
     }
 
