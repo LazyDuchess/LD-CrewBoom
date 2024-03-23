@@ -11,6 +11,8 @@ public class PreferencesWindow : EditorWindow
     {
         var window = GetWindow<PreferencesWindow>();
         window.titleContent = new GUIContent("CrewBoom Preferences");
+        window.maxSize = new Vector2(1200.0f, 235.0f);
+        window.minSize = new Vector2(600.0f, window.maxSize.y);
     }
 
     private void OnInspectorUpdate()
