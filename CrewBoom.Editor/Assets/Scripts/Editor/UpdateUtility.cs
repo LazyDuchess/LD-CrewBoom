@@ -52,7 +52,6 @@ Assets/User";
         try
         {
             var request = UnityWebRequest.Get(VersionRequestURL);
-            Log("Fetching latest version...");
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.Success)
             {
