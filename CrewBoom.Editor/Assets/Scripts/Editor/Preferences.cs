@@ -13,6 +13,7 @@ public static class Preferences
     private const string RegistryValueCopyBundles = "CopyBundles";
     private const string RegistryValueTargetBundlePath = "TargetBundlePath";
     private const string RegistryValueOpenFileExplorerOnBuild = "OpenFileExplorerOnBuild";
+    private const string RegistryValueAutoUpdate = "AutoUpdate";
     public static string AuthorName
     {
         get
@@ -58,6 +59,18 @@ public static class Preferences
         set
         {
             Registry.SetValue(RegistryKey, RegistryValueOpenFileExplorerOnBuild, value == true ? "true" : "false");
+        }
+    }
+
+    public static bool AutoUpdate
+    {
+        get
+        {
+            return Registry.GetValue(RegistryKey, RegistryValueAutoUpdate, "true") as string == "true";
+        }
+        set
+        {
+            Registry.SetValue(RegistryKey, RegistryValueAutoUpdate, value == true ? "true" : "false");
         }
     }
 }

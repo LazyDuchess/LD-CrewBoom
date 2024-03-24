@@ -10,9 +10,10 @@ public class PreferencesWindow : EditorWindow
     [MenuItem("CrewBoom/Preferences")]
     public static void ShowWindow()
     {
+        EditorCoroutineUtility.StartCoroutineOwnerless(UpdateUtility.FetchLatestUpdate());
         var window = GetWindow<PreferencesWindow>();
         window.titleContent = new GUIContent("CrewBoom Preferences");
-        window.maxSize = new Vector2(1200.0f, 255.0f);
+        window.maxSize = new Vector2(1200.0f, 290.0f);
         window.minSize = new Vector2(600.0f, window.maxSize.y);
     }
 
@@ -60,9 +61,43 @@ public class PreferencesWindow : EditorWindow
         var openFileExplorer = EditorGUILayout.Toggle("Open File Explorer on Build", currentOpenFileExplorer);
         if (openFileExplorer != currentOpenFileExplorer)
             Preferences.OpenFileExplorerOnBuild = openFileExplorer;
+        var currentCheckForUpdates = Preferences.AutoUpdate;
+        var checkForUpdates = EditorGUILayout.Toggle("Automatically Check for Updates", currentCheckForUpdates);
+        if (checkForUpdates != currentCheckForUpdates)
+            Preferences.AutoUpdate = checkForUpdates;
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField($"LD CrewBoom Version: {CrewBoomVersion.Version}");
-        if (GUILayout.Button("Update"))
-            EditorCoroutineUtility.StartCoroutine(UpdateUtility.UpdateCrewBoom(), this);
+        var upToDateLabel = "";
+        var updateButtonLabel = "Check for Update";
+        switch (UpdateUtility.UpdateStatus)
+        {
+            case UpdateUtility.UpdateStatuses.NotChecked:
+                upToDateLabel = "";
+                break;
+
+            case UpdateUtility.UpdateStatuses.Error:
+                upToDateLabel = "Failed to retrieve latest version";
+                break;
+
+            case UpdateUtility.UpdateStatuses.UpdateAvailable:
+                upToDateLabel = $"Update available: {UpdateUtility.UpdateRelease.tag_name}";
+                updateButtonLabel = "Update";
+                break;
+
+            case UpdateUtility.UpdateStatuses.UpToDate:
+                upToDateLabel = "Up to Date";
+                updateButtonLabel = "Repair";
+                break;
+
+            case UpdateUtility.UpdateStatuses.Checking:
+                upToDateLabel = "Checking for Updates...";
+                updateButtonLabel = "Update";
+                GUI.enabled = false;
+                break;
+        }
+        EditorGUILayout.LabelField(upToDateLabel);
+        if (GUILayout.Button(updateButtonLabel))
+            EditorCoroutineUtility.StartCoroutine(UpdateUtility.UpdateCrewBoom(false), this);
+        GUI.enabled = true;
     }
 }

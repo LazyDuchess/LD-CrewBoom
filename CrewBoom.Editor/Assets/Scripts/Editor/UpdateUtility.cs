@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Compression;
 using System;
 
+[InitializeOnLoad]
 public class UpdateUtility
 {
     public static bool Busy = false;
@@ -20,6 +21,16 @@ public class UpdateUtility
         Lower,
         Error
     }
+    public enum UpdateStatuses
+    {
+        NotChecked,
+        Error,
+        UpdateAvailable,
+        UpToDate,
+        Checking
+    }
+    public static UpdateStatuses UpdateStatus = UpdateStatuses.NotChecked;
+    public static GithubRelease UpdateRelease;
     private const string VersionRequestURL = "https://api.github.com/repos/LazyDuchess/LD-CrewBoom/releases/latest";
     private const string DownloadURL = "https://github.com/LazyDuchess/LD-CrewBoom/releases/download/{0}/{1}";
     private const string TempDirectory = "UpdateTemp";
@@ -27,11 +38,17 @@ public class UpdateUtility
 
 Assets/Characters
 Assets/User";
-    public static IEnumerator UpdateCrewBoom()
+
+    static UpdateUtility()
     {
-        if (Busy)
-            yield break;
-        Busy = true;
+        if (!Preferences.AutoUpdate)
+            return;
+        EditorCoroutineUtility.StartCoroutineOwnerless(UpdateCrewBoom(true));
+    }
+
+    public static IEnumerator FetchLatestUpdate()
+    {
+        UpdateStatus = UpdateStatuses.Checking;
         try
         {
             var request = UnityWebRequest.Get(VersionRequestURL);
@@ -43,58 +60,109 @@ Assets/User";
                 var release = JsonUtility.FromJson<GithubRelease>(body);
                 var latestVersion = release.tag_name;
                 var comparison = CompareVersionToCurrent(latestVersion);
+                UpdateRelease = release;
                 if (comparison == VersionCompareResult.Higher)
-                {
-                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {latestVersion}?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
-                    if (!updateConfirmation)
-                        yield break;
-                }
+                    UpdateStatus = UpdateStatuses.UpdateAvailable;
                 else
-                {
-                    var updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"You are already on the newest version. Repair?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
-                    if (!updateConfirmation)
-                        yield break;
-                }
-                GithubAsset zipAsset = null;
-                foreach(var asset in release.assets)
-                {
-                    if (asset.name.ToLowerInvariant().StartsWith("crewboom.editor"))
-                    {
-                        zipAsset = asset;
-                        break;
-                    }    
-                }
-                if (zipAsset == null)
-                {
-                    EditorUtility.DisplayDialog("Update CrewBoom", "Failed to fetch zip file in latest release.", "OK");
+                    UpdateStatus = UpdateStatuses.UpToDate;
+            }
+            else
+                UpdateStatus = UpdateStatuses.Error;
+        }
+        finally
+        {
+            if (UpdateStatus == UpdateStatuses.Checking)
+                UpdateStatus = UpdateStatuses.Error;
+        }
+    }
+
+    public static IEnumerator UpdateCrewBoom(bool autoUpdate)
+    {
+        if (Busy)
+            yield break;
+        Busy = true;
+        try
+        {
+            yield return FetchLatestUpdate();
+            switch (UpdateStatus)
+            {
+                case UpdateStatuses.NotChecked:
                     yield break;
-                }
-                var zipUrl = string.Format(DownloadURL, release.tag_name, zipAsset.name);
-                request = UnityWebRequest.Get(zipUrl);
-                Log("Downloading latest version...");
-                yield return request.SendWebRequest();
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    var zipbody = request.downloadHandler.data;
-                    var stream = new MemoryStream(zipbody);
-                    var zip = new ZipArchive(stream);
-                    if (Directory.Exists(TempDirectory))
+
+                case UpdateStatuses.Checking:
+                    yield break;
+
+                case UpdateStatuses.Error:
+                    if (autoUpdate)
+                        yield break;
+                    EditorUtility.DisplayDialog("Update CrewBoom", "Failed to fetch latest version.", "OK");
+                    yield break;
+
+                case UpdateStatuses.UpdateAvailable:
+                    bool updateConfirmation;
+                    if (autoUpdate)
+                        updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"There is a new version available ({UpdateRelease.tag_name}) Would you like to update?\n\n{AssetFoldersWarning}", "Yes", "No");
+                    else
+                        updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {UpdateRelease.tag_name}?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
+                    if (!updateConfirmation)
                     {
-                        Directory.Delete(TempDirectory, true);
-                        Directory.CreateDirectory(TempDirectory);
+                        if (autoUpdate)
+                            Preferences.AutoUpdate = false;
+                        yield break;
                     }
-                    zip.ExtractToDirectory(TempDirectory);
-                    ApplyUpdate();
-                    Log("Updated!");
-                }
-                else
+                    break;
+
+                case UpdateStatuses.UpToDate:
+                    if (autoUpdate)
+                        yield break;
+                    var repairConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"You are already on the newest version. Repair?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
+                    if (!repairConfirmation)
+                        yield break;
+                    break;
+            }
+            if (UpdateStatus == UpdateStatuses.Error)
+            {
+                if (autoUpdate)
+                    yield break;
+                EditorUtility.DisplayDialog("Update CrewBoom", "Failed to fetch latest version.", "OK");
+                yield break;
+            }
+              
+            GithubAsset zipAsset = null;
+            foreach(var asset in UpdateRelease.assets)
+            {
+                if (asset.name.ToLowerInvariant().StartsWith("crewboom.editor"))
                 {
-                    EditorUtility.DisplayDialog("Update CrewBoom", "Failed to download latest version.", "OK");
+                    zipAsset = asset;
+                    break;
+                }    
+            }
+            if (zipAsset == null)
+            {
+                EditorUtility.DisplayDialog("Update CrewBoom", "Failed to fetch zip file in latest release.", "OK");
+                yield break;
+            }
+            var zipUrl = string.Format(DownloadURL, UpdateRelease.tag_name, zipAsset.name);
+            var request = UnityWebRequest.Get(zipUrl);
+            Log("Downloading latest version...");
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                var zipbody = request.downloadHandler.data;
+                var stream = new MemoryStream(zipbody);
+                var zip = new ZipArchive(stream);
+                if (Directory.Exists(TempDirectory))
+                {
+                    Directory.Delete(TempDirectory, true);
+                    Directory.CreateDirectory(TempDirectory);
                 }
+                zip.ExtractToDirectory(TempDirectory);
+                ApplyUpdate();
+                Log("Updated!");
             }
             else
             {
-                EditorUtility.DisplayDialog("Update CrewBoom", "Failed to fetch latest version.", "OK");
+                EditorUtility.DisplayDialog("Update CrewBoom", "Failed to download latest version.", "OK");
             }
         }
         finally
