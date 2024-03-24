@@ -107,7 +107,10 @@ Assets/User";
                     if (!updateConfirmation)
                     {
                         if (autoUpdate)
+                        {
                             Preferences.AutoUpdate = false;
+                            Log("Head to CrewBoom -> Preferences to re-enable Auto Updates or update manually.");
+                        }
                         yield break;
                     }
                     break;
