@@ -14,4 +14,5 @@ This Repository is a custom fork of the [CrewBoom Unity Project](https://github.
 Head to the "Releases" tab to download the latest version. You'll be able to use this as a replacement for the CrewBoom Unity Project.
 
 [LD CrewBoom Documentation](https://github.com/LazyDuchess/LD-CrewBoom/wiki)
+
 [CrewBoom Documentation](https://github.com/LunaCapra/CrewBoom/wiki)
