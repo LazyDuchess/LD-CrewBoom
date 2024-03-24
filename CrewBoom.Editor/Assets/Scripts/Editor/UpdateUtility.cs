@@ -75,6 +75,7 @@ Assets/User";
         }
     }
 
+    // TODO: Clean up, this code is a mess cause I thought you couldn't call coroutines inside coroutines 💀.
     public static IEnumerator UpdateCrewBoom(bool autoUpdate)
     {
         if (Busy)
@@ -100,7 +101,7 @@ Assets/User";
                 case UpdateStatuses.UpdateAvailable:
                     bool updateConfirmation;
                     if (autoUpdate)
-                        updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"There is a new version available ({UpdateRelease.tag_name}) Would you like to update?\n\n{AssetFoldersWarning}", "Yes", "No");
+                        updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"There is a new version of LD CrewBoom available ({UpdateRelease.tag_name}) Would you like to update?\n\n{AssetFoldersWarning}", "Yes", "No");
                     else
                         updateConfirmation = EditorUtility.DisplayDialog("Update CrewBoom", $"Update to {UpdateRelease.tag_name}?\n\n{AssetFoldersWarning}", "Yes", "Cancel");
                     if (!updateConfirmation)
@@ -157,7 +158,6 @@ Assets/User";
                 }
                 zip.ExtractToDirectory(TempDirectory);
                 ApplyUpdate();
-                Log("Updated!");
             }
             else
             {
@@ -213,6 +213,7 @@ Assets/User";
         }
         Directory.Delete(TempDirectory, true);
         AssetDatabase.Refresh();
+        Log("CrewBoom Update applied!");
     }
 
     private static VersionCompareResult CompareVersionToCurrent(string version)
