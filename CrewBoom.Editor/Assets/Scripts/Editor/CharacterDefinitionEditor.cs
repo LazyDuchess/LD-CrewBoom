@@ -457,10 +457,14 @@ public class CharacterDefinitionEditor : Editor
             {
                 _spraycanMaterial.SetPass(0);
                 Graphics.DrawMeshNow(_spraycanMesh, _rig.RightPropBone.localToWorldMatrix);
+                _spraycanMaterial.SetPass(1);
+                Graphics.DrawMeshNow(_spraycanMesh, _rig.RightPropBone.localToWorldMatrix);
             }
             if (_phoneMesh && _rig.LeftPropBone)
             {
                 _previewMaterial.SetPass(0);
+                Graphics.DrawMeshNow(_phoneMesh, _rig.LeftPropBone.localToWorldMatrix);
+                _previewMaterial.SetPass(1);
                 Graphics.DrawMeshNow(_phoneMesh, _rig.LeftPropBone.localToWorldMatrix);
             }
         }
@@ -473,10 +477,14 @@ public class CharacterDefinitionEditor : Editor
             {
                 _previewMaterial.SetPass(0);
                 Graphics.DrawMeshNow(_skatesMeshL, _rig.LeftSkateBone.localToWorldMatrix);
+                _previewMaterial.SetPass(1);
+                Graphics.DrawMeshNow(_skatesMeshL, _rig.LeftSkateBone.localToWorldMatrix);
             }
             if (_skatesMeshR && _rig.RightSkateBone)
             {
                 _previewMaterial.SetPass(0);
+                Graphics.DrawMeshNow(_skatesMeshR, _rig.RightSkateBone.localToWorldMatrix);
+                _previewMaterial.SetPass(1);
                 Graphics.DrawMeshNow(_skatesMeshR, _rig.RightSkateBone.localToWorldMatrix);
             }
         }
