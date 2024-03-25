@@ -45,7 +45,6 @@ public class CharacterDefinitionEditor : Editor
     private GUIContent _invalidMessage;
     private GUIContent _validMessage;
     private GUIContent _prefabNotFoundMessage;
-    private GUIContent _shaderToggleContent;
     private GUIContent _blinkShapeKeyContent;
     private GUIContent _newCharacterContent;
     private GUIContent _skinnedRendererContent;
@@ -122,10 +121,6 @@ public class CharacterDefinitionEditor : Editor
         _prefabNotFoundMessage = EditorGUIUtility.IconContent("console.warnicon.sml");
         _prefabNotFoundMessage.text = "Character is not a prefab. Please create one.";
         _errorIcon = EditorGUIUtility.IconContent("console.erroricon.sml").image;
-
-        _shaderToggleContent = EditorGUIUtility.IconContent("Shader Icon");
-        _shaderToggleContent.text = "Use game shader";
-        _shaderToggleContent.tooltip = "On - Uses the shader the game uses for characters for the ouftits.\nOff - Uses the shader applied to the material (Custom shaders).";
 
         _bundleProperties = new GUIContent();
         _bundleProperties.image = EditorGUIUtility.IconContent("d_CustomTool").image;
@@ -645,38 +640,6 @@ public class CharacterDefinitionEditor : Editor
                     ValidateOutfits();
                 }
 
-                EditorGUILayout.Space();
-
-                if (GUILayout.Button("Use Game Shader on all Materials"))
-                {
-                    for(var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
-                    {
-                        for(var renderer = 0; renderer < _characterRenderers.arraySize; renderer++)
-                        {
-                            for(var material = 0;material < _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials.Length; material++)
-                            {
-                                _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[material] = true;
-                            }
-                        }
-                    }
-                }
-
-                if (GUILayout.Button("Uso Custom Shaders on all Materials"))
-                {
-                    for (var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
-                    {
-                        for (var renderer = 0; renderer < _characterRenderers.arraySize; renderer++)
-                        {
-                            for (var material = 0; material < _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials.Length; material++)
-                            {
-                                _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[material] = false;
-                            }
-                        }
-                    }
-                }
-
-                EditorGUILayout.Space();
-
                 for (int outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
                 {
                     if (!DrawMultiMeshOutfitProperty(outfit, ref _targetDefinition.Outfits[outfit].Name))
@@ -836,7 +799,7 @@ public class CharacterDefinitionEditor : Editor
                             EditorGUILayout.ObjectField("Original", _targetDefinition.Renderers[renderer].sharedMaterials[materialId], typeof(Material), false);
                             GUI.enabled = true;
 
-                            _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId] = EditorGUILayout.Toggle(_shaderToggleContent, _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId]);
+                            //_targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId] = EditorGUILayout.Toggle(_shaderToggleContent, _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId]);
 
                             EditorGUILayout.Space();
                         }
