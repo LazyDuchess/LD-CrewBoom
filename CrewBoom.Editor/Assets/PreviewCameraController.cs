@@ -33,5 +33,6 @@ public class PreviewCameraController : MonoBehaviour
         }
 
         Pitch = Mathf.Clamp(Pitch, -90f, 90f);
+        Distance = Mathf.Clamp(Distance, 0f, 10f);
     }
 }
