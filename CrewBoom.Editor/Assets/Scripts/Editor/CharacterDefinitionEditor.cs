@@ -795,13 +795,13 @@ public class CharacterDefinitionEditor : Editor
                             }
 
                             EditorGUILayout.BeginVertical("box");
-                            GUI.enabled = false;
+
                             var shader = _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader;
                             if (ShaderUtility.IsGameShader(shader))
                                 EditorGUILayout.LabelField($"Using Game Shader");
                             else
                                 EditorGUILayout.LabelField($"Using Custom Shader");
-                            GUI.enabled = true;
+
 
                             _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = (Material)EditorGUILayout.ObjectField(_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId], typeof(Material), false);
                             
