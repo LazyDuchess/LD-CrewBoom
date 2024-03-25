@@ -1,1 +1,0 @@
-User files go in this folder. They won't be removed or touched in any way by repair/updates.
