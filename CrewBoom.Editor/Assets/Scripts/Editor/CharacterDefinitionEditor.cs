@@ -794,19 +794,25 @@ public class CharacterDefinitionEditor : Editor
                                 _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = _targetDefinition.Renderers[renderer].sharedMaterials[materialId];
                             }
 
-                            if (ShaderUtility.IsGameShader(_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader))
-                                EditorGUILayout.HelpBox("Using Game Shader.", MessageType.Info);
+                            EditorGUILayout.BeginVertical("box");
+                            GUI.enabled = false;
+                            var shader = _targetDefinition.Renderers[renderer].sharedMaterials[materialId].shader;
+                            if (ShaderUtility.IsGameShader(shader))
+                                EditorGUILayout.LabelField($"Using Game Shader");
                             else
-                                EditorGUILayout.HelpBox("Using Custom Shader.", MessageType.Info);
+                                EditorGUILayout.LabelField($"Using Custom Shader");
+                            GUI.enabled = true;
 
                             _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = (Material)EditorGUILayout.ObjectField(_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId], typeof(Material), false);
+                            
+                            EditorGUILayout.Separator();
 
                             GUI.enabled = false;
-                            EditorGUILayout.ObjectField("Original", _targetDefinition.Renderers[renderer].sharedMaterials[materialId], typeof(Material), false);
+                            EditorGUILayout.ObjectField("Original Material", _targetDefinition.Renderers[renderer].sharedMaterials[materialId], typeof(Material), false);
                             GUI.enabled = true;
 
                             //_targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId] = EditorGUILayout.Toggle(_shaderToggleContent, _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId]);
-
+                            EditorGUILayout.EndVertical();
                             EditorGUILayout.Space();
                         }
 
