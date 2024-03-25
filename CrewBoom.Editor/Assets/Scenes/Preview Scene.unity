@@ -183,8 +183,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: sonic_character
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7100040714943513077, guid: bfe62f8f7f2fd784ba3d1c348189c9c4, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfe62f8f7f2fd784ba3d1c348189c9c4, type: 3}
 --- !u!1 &705507993
 GameObject:
