@@ -794,8 +794,6 @@ public class CharacterDefinitionEditor : Editor
                                 _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = _targetDefinition.Renderers[renderer].sharedMaterials[materialId];
                             }
 
-                            EditorGUILayout.BeginVertical("GroupBox");
-
                             var shader = _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader;
                             if (ShaderUtility.IsGameShader(shader))
                                 EditorGUILayout.LabelField($"Using Game Shader");
@@ -805,15 +803,13 @@ public class CharacterDefinitionEditor : Editor
 
                             _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = (Material)EditorGUILayout.ObjectField(_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId], typeof(Material), false);
                             
-                            EditorGUILayout.Separator();
+                            EditorGUILayout.Space();
 
                             GUI.enabled = false;
                             EditorGUILayout.ObjectField("Original Material", _targetDefinition.Renderers[renderer].sharedMaterials[materialId], typeof(Material), false);
                             GUI.enabled = true;
 
-                            //_targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId] = EditorGUILayout.Toggle(_shaderToggleContent, _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId]);
-                            EditorGUILayout.EndVertical();
-                            EditorGUILayout.Space();
+                            EditorGUILayout.Separator();
                         }
 
                         if (_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] == null && _targetDefinition.Outfits[outfit].EnabledRenderers[renderer])
