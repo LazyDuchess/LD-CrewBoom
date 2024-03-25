@@ -5,8 +5,10 @@ namespace CrewBoomMono
     [AddComponentMenu("Crew Boom/Character Definition")]
     public class CharacterDefinition : MonoBehaviour
     {
+#if UNITY_EDITOR
         public bool OverrideBundleFilename = false;
         public string BundleFilename = "";
+#endif
         public string CharacterName = "New Custom Character";
         public BrcCharacter FreestyleAnimation = BrcCharacter.Red;
         public BrcCharacter BounceAnimation = BrcCharacter.Red;
