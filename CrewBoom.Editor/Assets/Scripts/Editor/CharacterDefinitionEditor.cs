@@ -794,7 +794,7 @@ public class CharacterDefinitionEditor : Editor
                                 _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = _targetDefinition.Renderers[renderer].sharedMaterials[materialId];
                             }
 
-                            EditorGUILayout.BeginVertical("box");
+                            EditorGUILayout.BeginVertical("GroupBox");
 
                             var shader = _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader;
                             if (ShaderUtility.IsGameShader(shader))

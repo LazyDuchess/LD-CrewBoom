@@ -75,7 +75,7 @@ public class CharacterMaterialEditor : ShaderGUI
                 continue;
             if (property.name == "_MainTex" || property.name == "_Emission")
             {
-                EditorGUILayout.BeginVertical("Box");
+                EditorGUILayout.BeginVertical("GroupBox");
             }
             materialEditor.ShaderProperty(property, property.displayName);
             if (property.name == "_MainTex" || property.name == "_Emission")
