@@ -1084,7 +1084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OverrideBundleFilename: 0
-  BundleFilename: Sonic
+  BundleFilename: LazyDuchess.Sonic
   CharacterName: Sonic
   FreestyleAnimation: 3
   BounceAnimation: 3
