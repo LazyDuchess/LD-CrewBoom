@@ -2,12 +2,17 @@
 
 namespace CrewBoomMono
 {
+#if UNITY_EDITOR
+    [ExecuteAlways]
+#endif
     [AddComponentMenu("Crew Boom/Character Definition")]
     public class CharacterDefinition : MonoBehaviour
     {
 #if UNITY_EDITOR
         public bool OverrideBundleFilename = false;
         public string BundleFilename = "";
+        public static Mesh SprayCanMesh;
+        public static Material SprayCanMaterial;
 #endif
         public string CharacterName = "New Custom Character";
         public BrcCharacter FreestyleAnimation = BrcCharacter.Red;
@@ -35,6 +40,41 @@ namespace CrewBoomMono
         public bool CanBlink;
 
         public string Id;
+
+#if UNITY_EDITOR
+        private void OnRenderObject()
+        {
+            var propR = FindRecursive(transform, "propr");
+            if (propR != null && SprayCanMesh != null && SprayCanMaterial != null)
+            {
+                SprayCanMaterial.SetPass(0);
+                Graphics.DrawMeshNow(SprayCanMesh, propR.localToWorldMatrix);
+                SprayCanMaterial.SetPass(1);
+                Graphics.DrawMeshNow(SprayCanMesh, propR.localToWorldMatrix);
+            }
+        }
+
+        private static Transform FindRecursive(Transform transform, string name)
+        {
+            if (transform == null) return null;
+
+            if (transform.name == name)
+            {
+                return transform;
+            }
+
+            Transform next = null;
+            foreach (Transform child in transform)
+            {
+                next = FindRecursive(child, name);
+                if (next)
+                {
+                    break;
+                }
+            }
+            return next;
+        }
+#endif
     }
 
     public class CharacterConfig
