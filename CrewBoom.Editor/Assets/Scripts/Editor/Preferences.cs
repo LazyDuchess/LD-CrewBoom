@@ -14,6 +14,7 @@ public static class Preferences
     private const string RegistryValueTargetBundlePath = "TargetBundlePath";
     private const string RegistryValueOpenFileExplorerOnBuild = "OpenFileExplorerOnBuild";
     private const string RegistryValueAutoUpdate = "AutoUpdate";
+
     public static string AuthorName
     {
         get
@@ -71,6 +72,15 @@ public static class Preferences
         set
         {
             Registry.SetValue(RegistryKey, RegistryValueAutoUpdate, value == true ? "true" : "false");
+        }
+    }
+
+    // Might implement at a later point. Don't wanna make the preferences too confusing.
+    public static bool AllowEditPrefabInstances
+    {
+        get
+        {
+            return true;
         }
     }
 }

@@ -9,6 +9,36 @@ using UnityEngine.UIElements;
 [CustomEditor(typeof(CharacterDefinition))]
 public class CharacterDefinitionEditor : Editor
 {
+    public bool Editable
+    {
+        get
+        {
+            return _editable;
+        }
+        set
+        {
+            _editable = value;
+            GUI.enabled = false;
+        }
+    }
+    private bool _editable = true;
+    public bool GUIEnabled
+    {
+        get
+        {
+            return GUI.enabled;
+        }
+        set
+        {
+            if (!_editable)
+            {
+                GUI.enabled = false;
+                return;
+            }
+            GUI.enabled = value;
+        }
+    }
+
     private bool _initialized;
     private CharacterDefinition _targetDefinition;
 
@@ -509,7 +539,7 @@ public class CharacterDefinitionEditor : Editor
 
             if (disableGui)
             {
-                GUI.enabled = false;
+                GUIEnabled = false;
             }
 
             if (GUILayout.Button("Build character bundle"))
@@ -519,19 +549,39 @@ public class CharacterDefinitionEditor : Editor
 
             if (disableGui)
             {
-                GUI.enabled = true;
+                GUIEnabled = true;
             }
         }
     }
 
     private bool ValidateProperties()
     {
+        Editable = true;
+        GUIEnabled = true;
         bool allValid = true;
 
         if (!_isEditable)
         {
             EditorGUILayout.HelpBox("You are viewing the prefab asset. To edit the character you need to open the prefab.", MessageType.Warning);
             EditorGUILayout.Space();
+        }
+        else
+        {
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage == null || !prefabStage.IsPartOfPrefabContents((target as CharacterDefinition).gameObject))
+            {
+                if (Preferences.AllowEditPrefabInstances)
+                {
+                    EditorGUILayout.HelpBox("You are viewing an instance of the Character prefab. It's recommended you open the prefab and edit from there instead.", MessageType.Warning);
+                    EditorGUILayout.Space();
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("You are viewing an instance of the Character prefab. Open the prefab to edit it.", MessageType.Error);
+                    EditorGUILayout.Space();
+                    Editable = false;
+                }
+            }
         }
 
         GUILayout.BeginVertical(_bundleProperties, _propertyWindowStyle);
@@ -543,7 +593,7 @@ public class CharacterDefinitionEditor : Editor
             if (_showBundleProperties)
             {
                 EditorGUILayout.PropertyField(_bundleOverrideFilename, new GUIContent("Override Bundle Filename"));
-                GUI.enabled = _bundleOverrideFilename.boolValue;
+                GUIEnabled = _bundleOverrideFilename.boolValue;
                 if (!_bundleOverrideFilename.boolValue)
                 {
                     var builderFilename = CustomCharacterBundleBuilder.GetBundleFilename(target as CharacterDefinition);
@@ -551,7 +601,7 @@ public class CharacterDefinitionEditor : Editor
                         _bundleFilename.stringValue = builderFilename;
                 }
                 EditorGUILayout.PropertyField(_bundleFilename, new GUIContent("Bundle Filename"));
-                GUI.enabled = true;
+                GUIEnabled = true;
                 EditorGUILayout.HelpBox($"The filename of the character bundle will be \"{CustomCharacterBundleBuilder.GetFinalBundleFilename(target as CharacterDefinition)}\"", MessageType.Info);
 
                 EditorGUILayout.Separator();
@@ -805,9 +855,9 @@ public class CharacterDefinitionEditor : Editor
                             
                             EditorGUILayout.Space();
 
-                            GUI.enabled = false;
+                            GUIEnabled = false;
                             EditorGUILayout.ObjectField("Original Material", _targetDefinition.Renderers[renderer].sharedMaterials[materialId], typeof(Material), false);
-                            GUI.enabled = true;
+                            GUIEnabled = true;
 
                             EditorGUILayout.Separator();
                         }
