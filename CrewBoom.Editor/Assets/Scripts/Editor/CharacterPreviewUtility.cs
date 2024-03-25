@@ -15,6 +15,6 @@ public static class CharacterPreviewUtility
         var previewScene = EditorSceneManager.OpenScene(PreviewScenePath, OpenSceneMode.Single);
         EditorSceneManager.SetActiveScene(previewScene);
         EditorApplication.EnterPlaymode();
-        GameObject.FindObjectOfType<CharacterPreviewController>().Character = character;
+        GameObject.FindObjectOfType<CharacterPreviewController>().CharacterPrefab = character;
     }
 }
