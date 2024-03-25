@@ -550,6 +550,11 @@ public class CharacterDefinitionEditor : Editor
                 GUIEnabled = false;
             }
 
+            if (GUILayout.Button("Preview Character"))
+            {
+                CharacterPreviewUtility.PreviewCharacter(_prefab);
+            }
+
             if (GUILayout.Button("Build character bundle"))
             {
                 CustomCharacterBundleBuilder.BuildBundle(_prefab);

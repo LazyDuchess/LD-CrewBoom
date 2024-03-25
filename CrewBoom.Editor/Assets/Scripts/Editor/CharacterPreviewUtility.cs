@@ -1,0 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public static class CharacterPreviewUtility
+{
+    private const string PreviewScenePath = "Assets/Scenes/Preview Scene.unity";
+
+    public static void PreviewCharacter(GameObject character)
+    {
+        if (EditorApplication.isPlaying) return;
+        var previewScene = EditorSceneManager.OpenScene(PreviewScenePath, OpenSceneMode.Single);
+        EditorSceneManager.SetActiveScene(previewScene);
+        EditorApplication.EnterPlaymode();
+        GameObject.FindObjectOfType<CharacterPreviewController>().Character = character;
+    }
+}
