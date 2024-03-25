@@ -36,6 +36,19 @@ public static class CustomCharacterBundleBuilder
         return $"{GetBundleFilename(character)}.cbb";
     }
 
+    private static void ValidateGameShaders(CharacterDefinition definition)
+    {
+        var outfitRenderers = definition.GetComponentsInChildren<CharacterOutfitRenderer>();
+        foreach(var outfitRenderer in outfitRenderers)
+        {
+            for(var i = 0; i < outfitRenderer.UseShaderForMaterial.Length; i++)
+            {
+                outfitRenderer.UseShaderForMaterial[i] = ShaderUtility.IsGameShader(outfitRenderer.Materials[i].shader);
+                EditorUtility.SetDirty(outfitRenderer);
+            }
+        }
+    }
+
     public static void BuildBundle(GameObject prefab)
     {
         if (!EditorUtility.IsPersistent(prefab))
@@ -58,6 +71,7 @@ public static class CustomCharacterBundleBuilder
 
         definition.Id = id;
         EditorUtility.SetDirty(definition);
+        ValidateGameShaders(definition);
         AssetDatabase.SaveAssets();
 
         List<AssetBundleBuild> assetBundleDefinitionList = new();

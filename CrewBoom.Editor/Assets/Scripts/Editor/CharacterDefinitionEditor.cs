@@ -514,7 +514,6 @@ public class CharacterDefinitionEditor : Editor
 
             if (GUILayout.Button("Build character bundle"))
             {
-                UpdateGameShaders();
                 CustomCharacterBundleBuilder.BuildBundle(_prefab);
             }
 
@@ -714,21 +713,6 @@ public class CharacterDefinitionEditor : Editor
         serializedObject.ApplyModifiedProperties();
 
         return allValid;
-    }
-
-    private void UpdateGameShaders()
-    {
-        for (var outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
-        {
-            for (var renderer = 0; renderer < _characterRenderers.arraySize; renderer++)
-            {
-                for(var materialId = 0; materialId < _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials.Length; materialId++)
-                {
-                    _targetDefinition.Outfits[outfit].MaterialContainers[renderer].UseShaderForMaterial[materialId] = ShaderUtility.IsGameShader(_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader);
-                    EditorUtility.SetDirty(_targetDefinition.Outfits[outfit].MaterialContainers[renderer]);
-                }
-            }
-        }
     }
 
     private bool DrawMultiMeshOutfitProperty(int outfit, ref string title)
