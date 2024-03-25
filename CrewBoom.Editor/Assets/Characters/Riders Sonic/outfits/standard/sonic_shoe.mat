@@ -8,11 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: sonic_shoe
-  m_Shader: {fileID: 4800000, guid: 89fee2d46790bb64086885dc144be1a2, type: 3}
-  m_ValidKeywords:
+  m_Shader: {fileID: 4800000, guid: f012505ffee4a4d4b8cfc898889febea, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _EMISSIONUV_UV0
   - _MAINTEXUV_UV0
-  m_InvalidKeywords: []
+  - _TRANSPARENCY_OPAQUE
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -69,6 +70,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
+    - _CutOut: 0.1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -98,6 +100,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Transparency: 0
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
