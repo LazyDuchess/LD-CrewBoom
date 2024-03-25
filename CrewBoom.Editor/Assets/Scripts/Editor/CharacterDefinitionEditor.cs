@@ -796,7 +796,7 @@ public class CharacterDefinitionEditor : Editor
 
                             EditorGUILayout.BeginVertical("box");
                             GUI.enabled = false;
-                            var shader = _targetDefinition.Renderers[renderer].sharedMaterials[materialId].shader;
+                            var shader = _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader;
                             if (ShaderUtility.IsGameShader(shader))
                                 EditorGUILayout.LabelField($"Using Game Shader");
                             else
