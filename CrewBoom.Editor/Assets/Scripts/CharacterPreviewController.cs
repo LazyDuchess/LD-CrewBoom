@@ -28,6 +28,16 @@ public class CharacterPreviewController : MonoBehaviour
         Character.Initialize(PreviewController);
     }
 
+    public void PlaySoftBounceAnimation()
+    {
+        Character.PlaySoftBounceAnimation();
+    }
+
+    public void PlayFreestyleAnimation()
+    {
+        Character.PlayFreestyleAnimation();
+    }
+
     public void PlayAnimation(string trigger)
     {
         Character.Animator.Play(trigger);

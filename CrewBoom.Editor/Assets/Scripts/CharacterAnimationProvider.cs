@@ -8,7 +8,7 @@ public static class CharacterAnimationProvider
 {
     public static int GetFreestyleAnimation(BrcCharacter character)
     {
-        switch (c)
+        switch (character)
         {
             case BrcCharacter.Vinyl:
                 if (UnityEngine.Random.value < 0.33f)

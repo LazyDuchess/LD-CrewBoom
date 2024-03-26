@@ -24,6 +24,16 @@ public class PreviewCharacter : MonoBehaviour
         SetOutfit(0);
     }
 
+    public void PlaySoftBounceAnimation()
+    {
+        Animator.Play(CharacterAnimationProvider.GetSoftBounceAnimation(_definition.BounceAnimation));
+    }
+
+    public void PlayFreestyleAnimation()
+    {
+        Animator.Play(CharacterAnimationProvider.GetFreestyleAnimation(_definition.FreestyleAnimation));
+    }
+
     public void SetSprayCan(bool set)
     {
         if (set)
