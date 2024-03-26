@@ -10,6 +10,10 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+#Reserved for local characters i don't want on git
+/Assets/[Cc]haracters/[Ll]ocal
+/Assets/[Cc]haracters/[Ll]ocal.meta
+
 #CrewBoom User
 /Assets/[Uu]ser/
 /Assets/[Uu]ser.meta
