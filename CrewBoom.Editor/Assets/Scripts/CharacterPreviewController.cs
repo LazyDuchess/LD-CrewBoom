@@ -38,4 +38,11 @@ public class CharacterPreviewController : MonoBehaviour
     {
         Time.timeScale = slider.value;
     }
+
+    public void ExitPreview()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.ExitPlaymode();
+#endif
+    }
 }

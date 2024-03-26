@@ -60,6 +60,16 @@ public class PreviewCameraController : MonoBehaviour
             Pivot -= transform.forward * moveSpeed * Time.unscaledDeltaTime;
         }
 
+        if (Input.GetKey(KeyCode.Q))
+        {
+            Pivot -= Vector3.up * moveSpeed * Time.unscaledDeltaTime;
+        }
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            Pivot += Vector3.up * moveSpeed * Time.unscaledDeltaTime;
+        }
+
         var pivotLimit = 5f;
         Pivot = new Vector3(Mathf.Clamp(Pivot.x, -pivotLimit, pivotLimit), Mathf.Clamp(Pivot.y, -pivotLimit, pivotLimit), Mathf.Clamp(Pivot.z, -pivotLimit, pivotLimit));
 
