@@ -37,15 +37,30 @@ public class PreviewCharacter : MonoBehaviour
 
     private IEnumerator Blink()
     {
-        if (_definition.CanBlink == false) yield break;
-        if (_blinkRenderer.sharedMesh.blendShapeCount == 0) yield break;
+        CloseEyes();
+        yield return new WaitForSeconds(0.1f);
+        OpenEyes();
+    }
+
+    private void CloseEyes()
+    {
+        if (_definition.CanBlink == false) return;
+        if (_blinkRenderer.sharedMesh.blendShapeCount == 0) return;
         _blinkRenderer.SetBlendShapeWeight(0, 100f);
-        yield return new WaitForSeconds(0.05f);
+    }
+
+    private void OpenEyes()
+    {
+        if (_definition.CanBlink == false) return;
+        if (_blinkRenderer.sharedMesh.blendShapeCount == 0) return;
         _blinkRenderer.SetBlendShapeWeight(0, 0f);
     }
 
     public void SetOutfit(int outfitIndex)
     {
+        StopAllCoroutines();
+        if (_blinkRenderer != null)
+            OpenEyes();
         _blinkRenderer = null;
         var outfit = _definition.Outfits[outfitIndex];
         for(var rendererIter = 0;rendererIter < _definition.Renderers.Length; rendererIter++)
@@ -60,5 +75,10 @@ public class PreviewCharacter : MonoBehaviour
                 renderer.sharedMaterials = outfit.MaterialContainers[rendererIter].Materials;
             }
         }
+    }
+
+    public string GetOutfitName(int outfitIndex)
+    {
+        return _definition.Outfits[outfitIndex].Name;
     }
 }
