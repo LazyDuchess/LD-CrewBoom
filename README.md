@@ -14,8 +14,6 @@ This Repository is a custom fork of the [CrewBoom Unity Project](https://github.
 ## Usage
 Head to the "Releases" tab to download the latest version. You'll be able to use this as a replacement for the CrewBoom Unity Project.
 
-[LD CrewBoom Documentation](https://github.com/LazyDuchess/LD-CrewBoom/wiki)
+[LD CrewBoom Documentation](https://github.com/LazyDuchess/LD-CrewBoom/wiki) (How to install, new/changed features)
 
 [CrewBoom Documentation](https://github.com/LunaCapra/CrewBoom/wiki)
-
-[How to Preview Cypher Dances](https://github.com/LazyDuchess/LD-CrewBoom/wiki/Previewing-Cypher-Dances)
