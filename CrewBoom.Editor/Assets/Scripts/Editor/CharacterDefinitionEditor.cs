@@ -411,7 +411,7 @@ public class CharacterDefinitionEditor : Editor
         var phoneMeshAssets = AssetDatabase.LoadAllAssetsAtPath(PHONE_MESH_PATH);
         foreach (var obj in phoneMeshAssets)
         {
-            if (obj as Mesh != null)
+            if (obj as Mesh != null && obj.name == "phoneMesh_0")
             {
                 _phoneMesh = obj as Mesh;
                 break;
