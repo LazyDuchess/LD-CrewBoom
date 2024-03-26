@@ -7,7 +7,7 @@ using Unity.EditorCoroutines.Editor;
 
 public class PreferencesWindow : EditorWindow
 {
-    [MenuItem("CrewBoom/Preferences")]
+    [MenuItem("CrewBoom/Preferences", false, -100)]
     public static void ShowWindow()
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(UpdateUtility.FetchLatestUpdate());

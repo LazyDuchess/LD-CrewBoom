@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CustomCharacterIdentifierMenuItem
 {
-    [MenuItem("CrewBoom/Get GUID for character bundle")]
+    [MenuItem("CrewBoom/Get GUID for character bundle", false, -90)]
     public static void GetBundleID()
     {
         string file = EditorUtility.OpenFilePanel("Select a character bundle", CustomCharacterBundleBuilder.BUNDLE_OUTPUT_FOLDER, "");
