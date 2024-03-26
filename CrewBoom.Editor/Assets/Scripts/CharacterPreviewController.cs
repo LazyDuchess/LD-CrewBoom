@@ -9,6 +9,9 @@ using UnityEngine.UI;
 
 public class CharacterPreviewController : MonoBehaviour
 {
+    public Transform PropHolder;
+    public GameObject Phone;
+    public GameObject SprayCan;
     public AnimatorController PreviewController;
     [HideInInspector]
     public GameObject CharacterPrefab = null;
@@ -37,6 +40,16 @@ public class CharacterPreviewController : MonoBehaviour
     public void SetSpeed(Slider slider)
     {
         Time.timeScale = slider.value;
+    }
+
+    public void SetSprayCan(Toggle toggle)
+    {
+        Character.SetSprayCan(toggle.isOn);
+    }
+
+    public void SetPhone(Toggle toggle)
+    {
+        Character.SetPhone(toggle.isOn);
     }
 
     public void ExitPreview()

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
+using System.Linq;
 
 public class PreviewCharacter : MonoBehaviour
 {
@@ -11,13 +12,61 @@ public class PreviewCharacter : MonoBehaviour
     private SkinnedMeshRenderer _blinkRenderer = null;
     private CharacterDefinition _definition;
     private float _blinkTimer = MaxBlinkTimer;
+    private CharacterPreviewController _previewController = null;
 
     public void Initialize(AnimatorController controller)
     {
+        _previewController = CharacterPreviewController.Instance;
         Animator = GetComponent<Animator>();
         Animator.runtimeAnimatorController = controller;
         _definition = GetComponent<CharacterDefinition>();
         SetOutfit(0);
+    }
+
+    public void SetSprayCan(bool set)
+    {
+        if (set)
+        {
+            Animator.SetLayerWeight(2, 1f);
+            _previewController.SprayCan.transform.SetParent(GetPropRTransform(), false);
+        }
+        else
+        {
+            Animator.SetLayerWeight(2, 0f);
+            _previewController.SprayCan.transform.SetParent(_previewController.PropHolder, false);
+        }
+    }
+
+    public void SetPhone(bool set)
+    {
+        if (set)
+        {
+            Animator.SetLayerWeight(1, 1f);
+            _previewController.Phone.transform.SetParent(GetPropLTransform(), false);
+        }
+        else
+        {
+            Animator.SetLayerWeight(1, 0f);
+            _previewController.Phone.transform.SetParent(_previewController.PropHolder, false);
+        }
+    }
+
+    private Transform GetPropLTransform()
+    {
+        var skeletonRoot = transform.Find("root");
+        var rightHandHumanBone = Animator.avatar.humanDescription.human.FirstOrDefault(x => x.humanName == "LeftHand");
+        var rightHandBone = skeletonRoot.FindRecursive(rightHandHumanBone.boneName);
+        var propRBone = rightHandBone.FindRecursive("propl");
+        return propRBone;
+    }
+
+    private Transform GetPropRTransform()
+    {
+        var skeletonRoot = transform.Find("root");
+        var rightHandHumanBone = Animator.avatar.humanDescription.human.FirstOrDefault(x => x.humanName == "RightHand");
+        var rightHandBone = skeletonRoot.FindRecursive(rightHandHumanBone.boneName);
+        var propRBone = rightHandBone.FindRecursive("propr");
+        return propRBone;
     }
 
     public void SetTrigger(string trigger)
