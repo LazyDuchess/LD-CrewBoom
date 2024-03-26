@@ -82,5 +82,10 @@ public class CharacterPreviewController : MonoBehaviour
     {
         UnityEditor.EditorApplication.ExitPlaymode();
     }
+
+    public void Blink()
+    {
+        Character.StartCoroutine(Character.Blink());
+    }
 }
 #endif

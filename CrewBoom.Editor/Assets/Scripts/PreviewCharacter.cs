@@ -86,12 +86,12 @@ public class PreviewCharacter : MonoBehaviour
         if (_blinkTimer <= 0f)
         {
             StartCoroutine(Blink());
-            _blinkTimer = MaxBlinkTimer;
         }
     }
 
-    private IEnumerator Blink()
+    public IEnumerator Blink()
     {
+        _blinkTimer = MaxBlinkTimer;
         CloseEyes();
         yield return new WaitForSeconds(0.1f);
         OpenEyes();
