@@ -67,6 +67,12 @@ function CreateProjectZip(){
         if($_.FullName -like "*CrewBoom.Editor\Assets\Characters\Local\*"){
             $doZip = $false
         }
+        if($_.FullName -like "*CrewBoom.Editor\Assets\Characters\Local.meta"){
+            $doZip = $false
+        }
+        if($_.FullName -like "*CrewBoom.Editor\Assets\User.meta*"){
+            $doZip = $false
+        }
         if(Test-Path -Path $_.FullName -PathType leaf){
             if($doZip){
 			    AddToZip $zip $_.FullName $path
