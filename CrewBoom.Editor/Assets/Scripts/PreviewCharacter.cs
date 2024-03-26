@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using CrewBoomMono;
 using System.Collections;
 using System.Collections.Generic;
@@ -128,6 +129,22 @@ public class PreviewCharacter : MonoBehaviour
 
     public string GetOutfitName(int outfitIndex)
     {
-        return _definition.Outfits[outfitIndex].Name;
+        var name = _definition.Outfits[outfitIndex].Name;
+        if (string.IsNullOrEmpty(name))
+        {
+            switch (outfitIndex)
+            {
+                case 0:
+                    return "Spring";
+                case 1:
+                    return "Summer";
+                case 2:
+                    return "Autumn";
+                case 3:
+                    return "Winter";
+            }
+        }
+        return name;
     }
 }
+#endif

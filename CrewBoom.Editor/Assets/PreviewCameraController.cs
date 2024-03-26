@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -77,3 +78,4 @@ public class PreviewCameraController : MonoBehaviour
         Distance = Mathf.Clamp(Distance, 0f, 10f);
     }
 }
+#endif

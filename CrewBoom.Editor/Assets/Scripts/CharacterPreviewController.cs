@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,8 +55,7 @@ public class CharacterPreviewController : MonoBehaviour
 
     public void ExitPreview()
     {
-#if UNITY_EDITOR
         UnityEditor.EditorApplication.ExitPlaymode();
-#endif
     }
 }
+#endif
