@@ -2115,10 +2115,10 @@ MonoBehaviour:
   MoveSpeed: 1
   Sensitivity: 3.5
   ZoomSensitivity: 0.05
-  Pivot: {x: 0, y: 0.5, z: 0}
+  Pivot: {x: 0, y: 1, z: 0}
   Yaw: -150
   Pitch: 25
-  Distance: 1.5
+  Distance: 2
 --- !u!1 &1048772612
 GameObject:
   m_ObjectHideFlags: 0
@@ -3783,7 +3783,7 @@ MonoBehaviour:
   Phone: {fileID: 1944161337}
   SprayCan: {fileID: 353204632}
   PreviewController: {fileID: 9100000, guid: 44e2b95829c86ea47b3389ca0b9e0bc1, type: 2}
-  CharacterPrefab: {fileID: 4549643952022176053, guid: bfe62f8f7f2fd784ba3d1c348189c9c4, type: 3}
+  CharacterPrefab: {fileID: 4814558600860685919, guid: e4da75a0a9c1b8d4bac75cbe5a24e301, type: 3}
   Character: {fileID: 0}
 --- !u!4 &1766466497
 Transform:
