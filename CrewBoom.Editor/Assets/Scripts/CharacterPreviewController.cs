@@ -18,6 +18,8 @@ public class CharacterPreviewController : MonoBehaviour
     public GameObject CharacterPrefab = null;
     [HideInInspector]
     public PreviewCharacter Character = null;
+    private bool _paused = false;
+    private float _timeScale = 1f;
 
     public static CharacterPreviewController Instance { get; private set; }
     private void Awake()
@@ -26,6 +28,15 @@ public class CharacterPreviewController : MonoBehaviour
         var character = Instantiate(CharacterPrefab);
         Character = character.AddComponent<PreviewCharacter>();
         Character.Initialize(PreviewController);
+    }
+    
+    public void SetPaused(Toggle toggle)
+    {
+        _paused = toggle.isOn;
+        if (_paused)
+            Time.timeScale = 0f;
+        else
+            Time.timeScale = _timeScale;
     }
 
     public void PlaySoftBounceAnimation()
@@ -50,7 +61,11 @@ public class CharacterPreviewController : MonoBehaviour
 
     public void SetSpeed(Slider slider)
     {
-        Time.timeScale = slider.value;
+        _timeScale = slider.value;
+        if (_paused)
+            Time.timeScale = 0f;
+        else
+            Time.timeScale = slider.value;
     }
 
     public void SetSprayCan(Toggle toggle)
