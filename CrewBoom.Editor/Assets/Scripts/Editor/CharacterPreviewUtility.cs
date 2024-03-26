@@ -12,6 +12,7 @@ public static class CharacterPreviewUtility
     public static void PreviewCharacter(GameObject character)
     {
         if (EditorApplication.isPlaying) return;
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
         var previewScene = EditorSceneManager.OpenScene(PreviewScenePath, OpenSceneMode.Single);
         EditorSceneManager.SetActiveScene(previewScene);
         EditorApplication.EnterPlaymode();

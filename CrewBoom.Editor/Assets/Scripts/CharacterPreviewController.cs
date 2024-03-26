@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterPreviewController : MonoBehaviour
 {
@@ -12,25 +13,29 @@ public class CharacterPreviewController : MonoBehaviour
     [HideInInspector]
     public GameObject CharacterPrefab = null;
     [HideInInspector]
-    public GameObject Character = null;
+    public PreviewCharacter Character = null;
 
-    private Animator _animator = null;
     public static CharacterPreviewController Instance { get; private set; }
     private void Awake()
     {
         Instance = this;
-        Character = Instantiate(CharacterPrefab);
-        InitializePreviewCharacter();
-    }
-
-    private void InitializePreviewCharacter()
-    {
-        _animator = Character.GetComponent<Animator>();
-        _animator.runtimeAnimatorController = PreviewController;
+        var character = Instantiate(CharacterPrefab);
+        Character = character.AddComponent<PreviewCharacter>();
+        Character.Initialize(PreviewController);
     }
 
     public void TriggerAnimation(string trigger)
     {
-        _animator.SetTrigger(trigger);
+        Character.SetTrigger(trigger);
+    }
+
+    public void SetOutfit(int outfit)
+    {
+        Character.SetOutfit(outfit);
+    }
+
+    public void SetSpeed(Slider slider)
+    {
+        Time.timeScale = slider.value;
     }
 }
