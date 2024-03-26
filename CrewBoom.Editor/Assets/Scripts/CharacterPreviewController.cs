@@ -28,9 +28,9 @@ public class CharacterPreviewController : MonoBehaviour
         Character.Initialize(PreviewController);
     }
 
-    public void TriggerAnimation(string trigger)
+    public void PlayAnimation(string trigger)
     {
-        Character.SetTrigger(trigger);
+        Character.Animator.Play(trigger);
     }
 
     public void SetOutfit(int outfit)

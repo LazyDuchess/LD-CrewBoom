@@ -70,11 +70,6 @@ public class PreviewCharacter : MonoBehaviour
         return propRBone;
     }
 
-    public void SetTrigger(string trigger)
-    {
-        Animator.SetTrigger(trigger);
-    }
-
     private void Update()
     {
         _blinkTimer -= Time.deltaTime;
