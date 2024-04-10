@@ -9,10 +9,9 @@ using System.Linq;
 public class PreviewCharacter : MonoBehaviour
 {
     public Animator Animator;
-    private const float MaxBlinkTimer = 6f;
     private SkinnedMeshRenderer _blinkRenderer = null;
     private CharacterDefinition _definition;
-    private float _blinkTimer = MaxBlinkTimer;
+    private float _blinkTimer = 0f;
     private CharacterPreviewController _previewController = null;
 
     public void Initialize(AnimatorController controller)
@@ -22,6 +21,11 @@ public class PreviewCharacter : MonoBehaviour
         Animator.runtimeAnimatorController = controller;
         _definition = GetComponent<CharacterDefinition>();
         SetOutfit(0);
+    }
+
+    private void ResetBlinkTimer()
+    {
+        _blinkTimer = UnityEngine.Random.Range(2, 4);
     }
 
     public void PlaySoftBounceAnimation()
@@ -91,7 +95,7 @@ public class PreviewCharacter : MonoBehaviour
 
     public IEnumerator Blink()
     {
-        _blinkTimer = MaxBlinkTimer;
+        ResetBlinkTimer();
         CloseEyes();
         yield return new WaitForSeconds(0.1f);
         OpenEyes();
