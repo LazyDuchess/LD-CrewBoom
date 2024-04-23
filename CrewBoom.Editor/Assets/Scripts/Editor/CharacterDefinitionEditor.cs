@@ -857,11 +857,17 @@ public class CharacterDefinitionEditor : Editor
                                 _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = _targetDefinition.Renderers[renderer].sharedMaterials[materialId];
                             }
 
-                            var shader = _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId].shader;
-                            if (ShaderUtility.IsGameShader(shader))
-                                EditorGUILayout.LabelField($"Using Game Shader");
-                            else
-                                EditorGUILayout.LabelField($"Using Custom Shader");
+                            var mat = _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId];
+
+                            if (mat != null)
+                            {
+                                var shader = mat.shader;
+
+                                if (ShaderUtility.IsGameShader(shader))
+                                    EditorGUILayout.LabelField($"Using Game Shader");
+                                else
+                                    EditorGUILayout.LabelField($"Using Custom Shader");
+                            }
 
 
                             _targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId] = (Material)EditorGUILayout.ObjectField(_targetDefinition.Outfits[outfit].MaterialContainers[renderer].Materials[materialId], typeof(Material), false);
