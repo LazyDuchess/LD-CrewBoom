@@ -251,7 +251,7 @@ public class CharacterDefinitionEditor : Editor
 
     private void ValidateOutfits()
     {
-        if (_targetDefinition.Outfits == null)
+        if (_targetDefinition.Outfits == null || _targetDefinition.Outfits.Length != OUTFIT_AMOUNT)
         {
             _targetDefinition.Outfits = new CharacterOutfit[OUTFIT_AMOUNT];
         }
