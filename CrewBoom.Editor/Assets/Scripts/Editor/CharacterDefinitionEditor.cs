@@ -255,22 +255,6 @@ public class CharacterDefinitionEditor : Editor
         {
             _targetDefinition.Outfits = new CharacterOutfit[OUTFIT_AMOUNT];
         }
-        else if (_targetDefinition.Outfits.Length != OUTFIT_AMOUNT)
-        {
-            //Delete any extra components
-            for (int i = _targetDefinition.Outfits.Length - 1; i > OUTFIT_AMOUNT - 1; i--)
-            {
-                DestroyImmediate(_targetDefinition.Outfits[i]);
-            }
-            Array.Resize(ref _targetDefinition.Outfits, OUTFIT_AMOUNT);
-        }
-        for (int i = 0; i < _targetDefinition.Outfits.Length; i++)
-        {
-            if (_targetDefinition.Outfits[i] == null)
-            {
-                _targetDefinition.Outfits[i] = _outfitRoot.AddComponent<CharacterOutfit>();
-            }
-        }
         ValidateOutfitNames();
 
         for (int outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
