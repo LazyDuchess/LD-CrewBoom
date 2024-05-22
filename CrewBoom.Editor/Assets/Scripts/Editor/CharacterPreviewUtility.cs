@@ -13,7 +13,11 @@ public static class CharacterPreviewUtility
     {
         if (EditorApplication.isPlaying) return;
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-        var previewScene = EditorSceneManager.OpenScene(PreviewScenePath, OpenSceneMode.Single);
+        Resources.UnloadUnusedAssets();
+        System.GC.Collect();
+        var previewScene = EditorSceneManager.GetSceneByPath(PreviewScenePath);
+        if (previewScene == null)
+            previewScene = EditorSceneManager.OpenScene(PreviewScenePath, OpenSceneMode.Single);
         EditorSceneManager.SetActiveScene(previewScene);
         EditorApplication.EnterPlaymode();
         GameObject.FindObjectOfType<CharacterPreviewController>().CharacterPrefab = character;
