@@ -255,6 +255,14 @@ public class CharacterDefinitionEditor : Editor
         {
             _targetDefinition.Outfits = new CharacterOutfit[OUTFIT_AMOUNT];
         }
+        for (int i = 0; i < _targetDefinition.Outfits.Length; i++)
+        {
+            if (_targetDefinition.Outfits[i] == null)
+            {
+                _targetDefinition.Outfits[i] = _outfitRoot.AddComponent<CharacterOutfit>();
+                _targetDefinition.Outfits[i].Name = _outfitLabels[i];
+            }
+        }
         ValidateOutfitNames();
 
         for (int outfit = 0; outfit < OUTFIT_AMOUNT; outfit++)
@@ -683,6 +691,10 @@ public class CharacterDefinitionEditor : Editor
                 EditorGUI.indentLevel--;
 
                 if (_characterRenderers.arraySize != initialRendererAmount)
+                {
+                    ValidateOutfits();
+                }
+                else if (_targetDefinition.Outfits == null || _targetDefinition.Outfits.Length < OUTFIT_AMOUNT)
                 {
                     ValidateOutfits();
                 }
