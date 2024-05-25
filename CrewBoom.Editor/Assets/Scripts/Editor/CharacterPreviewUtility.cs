@@ -16,7 +16,7 @@ public static class CharacterPreviewUtility
         Resources.UnloadUnusedAssets();
         System.GC.Collect();
         var previewScene = EditorSceneManager.GetSceneByPath(PreviewScenePath);
-        if (previewScene == null)
+        if (previewScene == null || !previewScene.IsValid())
             previewScene = EditorSceneManager.OpenScene(PreviewScenePath, OpenSceneMode.Single);
         EditorSceneManager.SetActiveScene(previewScene);
         EditorApplication.EnterPlaymode();
