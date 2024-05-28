@@ -70,10 +70,28 @@ public class CharacterMaterialEditor : ShaderGUI
         }
 
         var inShade = false;
+        var inOutline = false;
         foreach (var property in properties)
         {
             if ((property.flags & MaterialProperty.PropFlags.HideInInspector) == MaterialProperty.PropFlags.HideInInspector)
                 continue;
+            if (property.name.ToLowerInvariant().Contains("outline"))
+            {
+                if (!inOutline)
+                {
+                    inOutline = true;
+                    EditorGUILayout.BeginVertical("GroupBox");
+                    GUILayout.Label("Outline");
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.Space();
+                }
+            }
+            else if (inOutline)
+            {
+                inOutline = false;
+                EditorGUI.indentLevel--;
+                EditorGUILayout.EndVertical();
+            }
             if (property.name.ToLowerInvariant().StartsWith("_shade"))
             {
                 if (!inShade)
@@ -117,6 +135,14 @@ public class CharacterMaterialEditor : ShaderGUI
                 }
                 EditorGUILayout.EndVertical();
             }
+        }
+
+        if (inShade || inOutline)
+        {
+            inShade = false;
+            inOutline = false;
+            EditorGUI.indentLevel--;
+            EditorGUILayout.EndVertical();
         }
         materialEditor.RenderQueueField();
     }

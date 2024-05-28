@@ -3,6 +3,7 @@ Shader "LD CrewBoom/Character"
     Properties
     {
         [HideInInspector] [KeywordEnum(Opaque, Cutout)] _Transparency ("Transparency", Float) = 0
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
 
         [HideInInspector] [KeywordEnum(UV0, UV1)] _MainTexUV ("UV Map", Float) = 0
@@ -20,6 +21,12 @@ Shader "LD CrewBoom/Character"
         _MainTex ("Texture", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
 
+        [Toggle] _Outline ("Outline", Float) = 1
+        _OutlineColor("Outline Color", Color) = (0,0,0,1)
+        _OutlineMultiplier("Outline Multiplier", float) = 0.005
+        _MinOutlineSize("Min Outline Multiplier", float) = 0.002
+        _MaxOutlineSize("Max Outline Multiplier", float) = 0.008
+
         _ShadeCel("Shading Toon Falloff", Range(0,1.5)) = 1
         _ShadeShadowOffset("Shading Offset", Range(-1,1)) = 0
         _ShadeLightTint("Light Tint", Color) = (1,1,1,1)
@@ -27,12 +34,6 @@ Shader "LD CrewBoom/Character"
         _ShadeEnvLight("Game Light Strength", Range(0,1)) = 1
         _ShadeEnvShadow("Game Shadow Strength", Range(0,1)) = 1
         _ShadeSunLight("Sun Light Strength", Range(0,1)) = 1
-
-        [Toggle] _Outline ("Outline", Float) = 1
-        _OutlineColor("Outline Color", Color) = (0,0,0,1)
-        _OutlineMultiplier("Outline Multiplier", float) = 0.005
-        _MinOutlineSize("Min Outline Multiplier", float) = 0.002
-        _MaxOutlineSize("Max Outline Multiplier", float) = 0.008
     }
     SubShader
     {
@@ -124,6 +125,7 @@ Shader "LD CrewBoom/Character"
 
         Pass
         {
+            Cull [_Cull]
             CGPROGRAM
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT
             #pragma shader_feature _MAINTEXSCROLL_ON
