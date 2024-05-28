@@ -17,6 +17,11 @@ Shader "LD CrewBoom/Character"
         [HideInInspector] _EmissionVSpeed ("V Speed", Float) = 0
 
         _Color ("Color", Color) = (1,1,1,1)
+
+        _ShadeCel("Cel Shading", Range(0,1)) = 1
+        _ShadeLightTint("Light Tint", Color) = (1,1,1,1)
+        _ShadeShadowTint("Shadow Tint", Color) = (1,1,1,1)
+
         _MainTex ("Texture", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
         [Toggle] _Outline ("Outline", Float) = 1
@@ -150,6 +155,8 @@ Shader "LD CrewBoom/Character"
             sampler2D _Emission;
             float4 _Emission_ST;
             float4 _Color;
+            float4 _ShadeLightTint;
+            float4 _ShadeShadowTint;
 
             #if _MAINTEXSCROLL_ON
             float _MainTexUSpeed;
@@ -195,11 +202,17 @@ Shader "LD CrewBoom/Character"
             #if _TRANSPARENCY_CUTOUT
             float _CutOut;
             #endif
+            float _ShadeCel;
 
             fixed4 frag(v2f i) : SV_Target
             {
-                fixed lighting = saturate(dot(i.normal, _WorldSpaceLightPos0) * LIGHT_MULTIPLY);
-                float4 lightColor = lerp(ShadowColor, LightColor, lighting);
+                float shadeLerp = pow(_ShadeCel, 4);
+                //float shadeLerp = _ShadeCel;
+                float smoothness = lerp(1, LIGHT_MULTIPLY, shadeLerp);
+                fixed lighting = saturate(dot(i.normal, _WorldSpaceLightPos0) * smoothness);
+                float4 lColor = LightColor * _ShadeLightTint;
+                float4 sColor = ShadowColor * _ShadeShadowTint;
+                float4 lightColor = lerp(sColor, lColor, lighting);
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
                 //col.a = 1.0;
                 col.rgb *= lightColor * _LightColor0.rgb;
