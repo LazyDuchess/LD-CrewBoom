@@ -17,13 +17,17 @@ Shader "LD CrewBoom/Character"
         [HideInInspector] _EmissionVSpeed ("V Speed", Float) = 0
 
         _Color ("Color", Color) = (1,1,1,1)
-
-        _ShadeCel("Cel Shading", Range(0,1.5)) = 1
-        _ShadeLightTint("Light Tint", Color) = (1,1,1,1)
-        _ShadeShadowTint("Shadow Tint", Color) = (1,1,1,1)
-
         _MainTex ("Texture", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
+
+        _ShadeCel("Shading Toon Falloff", Range(0,1.5)) = 1
+        _ShadeShadowOffset("Shading Offset", Range(-1,1)) = 0
+        _ShadeLightTint("Light Tint", Color) = (1,1,1,1)
+        _ShadeShadowTint("Shadow Tint", Color) = (1,1,1,1)
+        _ShadeEnvLight("Game Light Strength", Range(0,1)) = 1
+        _ShadeEnvShadow("Game Shadow Strength", Range(0,1)) = 1
+        _ShadeSunLight("Sun Light Strength", Range(0,1)) = 1
+
         [Toggle] _Outline ("Outline", Float) = 1
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
         _OutlineMultiplier("Outline Multiplier", float) = 0.005
@@ -157,6 +161,8 @@ Shader "LD CrewBoom/Character"
             float4 _Color;
             float4 _ShadeLightTint;
             float4 _ShadeShadowTint;
+            float _ShadeEnvLight;
+            float _ShadeEnvShadow;
 
             #if _MAINTEXSCROLL_ON
             float _MainTexUSpeed;
@@ -203,19 +209,21 @@ Shader "LD CrewBoom/Character"
             float _CutOut;
             #endif
             float _ShadeCel;
+            float _ShadeSunLight;
+            float _ShadeShadowOffset;
 
             fixed4 frag(v2f i) : SV_Target
             {
                 float shadeLerp = pow(_ShadeCel, 4);
                 //float shadeLerp = _ShadeCel;
                 float smoothness = lerp(1, LIGHT_MULTIPLY, shadeLerp);
-                fixed lighting = saturate(dot(i.normal, _WorldSpaceLightPos0) * smoothness);
-                float4 lColor = LightColor * _ShadeLightTint;
-                float4 sColor = ShadowColor * _ShadeShadowTint;
+                fixed lighting = saturate((dot(i.normal, _WorldSpaceLightPos0) - _ShadeShadowOffset) * smoothness);
+                float4 lColor = lerp(1, LightColor, _ShadeEnvLight) * _ShadeLightTint;
+                float4 sColor = lerp(1, ShadowColor, _ShadeEnvShadow) * _ShadeShadowTint;
                 float4 lightColor = lerp(sColor, lColor, lighting);
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
                 //col.a = 1.0;
-                col.rgb *= lightColor * _LightColor0.rgb;
+                col.rgb *= lightColor * lerp(1, _LightColor0.rgb, _ShadeSunLight);
                 fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb;
                 col.rgb += emissionCol.rgb;
                 #if _TRANSPARENCY_CUTOUT
