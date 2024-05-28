@@ -69,10 +69,28 @@ public class CharacterMaterialEditor : ShaderGUI
             materialEditor.ShaderProperty(cutoutProperty, cutoutProperty.displayName);
         }
 
+        var inShade = false;
         foreach (var property in properties)
         {
             if ((property.flags & MaterialProperty.PropFlags.HideInInspector) == MaterialProperty.PropFlags.HideInInspector)
                 continue;
+            if (property.name.ToLowerInvariant().StartsWith("_shade"))
+            {
+                if (!inShade)
+                {
+                    inShade = true;
+                    EditorGUILayout.BeginVertical("GroupBox");
+                    GUILayout.Label("Shading");
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.Space();
+                }
+            }
+            else if (inShade)
+            {
+                inShade = false;
+                EditorGUI.indentLevel--;
+                EditorGUILayout.EndVertical();
+            }
             var outlineProperty = ShaderGUI.FindProperty("_Outline", properties);
             if (outlineProperty.floatValue == 0f && property != outlineProperty && property.name.Contains("Outline"))
                 continue;
@@ -81,6 +99,7 @@ public class CharacterMaterialEditor : ShaderGUI
                 EditorGUILayout.BeginVertical("GroupBox");
             }
             materialEditor.ShaderProperty(property, property.displayName);
+            
             if (property.name == "_MainTex" || property.name == "_Emission")
             {
                 var uvProperty = ShaderGUI.FindProperty($"{property.name}UV", properties);

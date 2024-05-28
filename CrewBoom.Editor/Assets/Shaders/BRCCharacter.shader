@@ -18,7 +18,7 @@ Shader "LD CrewBoom/Character"
 
         _Color ("Color", Color) = (1,1,1,1)
 
-        _ShadeCel("Cel Shading", Range(0,1)) = 1
+        _ShadeCel("Cel Shading", Range(0,1.5)) = 1
         _ShadeLightTint("Light Tint", Color) = (1,1,1,1)
         _ShadeShadowTint("Shadow Tint", Color) = (1,1,1,1)
 
