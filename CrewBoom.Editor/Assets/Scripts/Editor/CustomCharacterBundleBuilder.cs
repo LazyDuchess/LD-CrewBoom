@@ -41,8 +41,14 @@ public static class CustomCharacterBundleBuilder
         var outfitRenderers = definition.GetComponentsInChildren<CharacterOutfitRenderer>();
         foreach(var outfitRenderer in outfitRenderers)
         {
+            if (outfitRenderer == null) continue;
+            if (outfitRenderer.Materials == null) continue;
             for(var i = 0; i < outfitRenderer.UseShaderForMaterial.Length; i++)
             {
+                var mat = outfitRenderer.Materials[i];
+                outfitRenderer.UseShaderForMaterial[i] = false;
+                if (mat == null) continue;
+                if (mat.shader == null) continue;
                 outfitRenderer.UseShaderForMaterial[i] = ShaderUtility.IsGameShader(outfitRenderer.Materials[i].shader);
                 EditorUtility.SetDirty(outfitRenderer);
             }
