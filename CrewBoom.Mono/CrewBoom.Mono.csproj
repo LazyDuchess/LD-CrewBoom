@@ -3,7 +3,7 @@
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>CrewBoomMono</AssemblyName>
     <Description>Library to supply monobehaviours for Crew Boom characters.</Description>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
