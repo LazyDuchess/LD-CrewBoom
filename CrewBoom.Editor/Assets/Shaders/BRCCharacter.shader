@@ -2,7 +2,9 @@ Shader "LD CrewBoom/Character"
 {
     Properties
     {
-        [HideInInspector] [KeywordEnum(Opaque, Cutout)] _Transparency ("Transparency", Float) = 0
+        [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendSrc ("Blend mode Source", Int) = 1
+        [HideInInspector] [Enum(UnityEngine.Rendering.BlendMode)] _BlendDst ("Blend mode Destination", Int) = 0
+        [HideInInspector] [KeywordEnum(Opaque, Cutout, Transparent)] _Transparency ("Transparency", Float) = 0
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
 
@@ -42,90 +44,8 @@ Shader "LD CrewBoom/Character"
 
         Pass
         {
-            Cull Front
-            CGPROGRAM
-            #pragma shader_feature _OUTLINE_ON
-            #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT
-            #pragma shader_feature _MAINTEXSCROLL_ON
-            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "UnityCG.cginc"
-            #include "Lighting.cginc"
-            fixed4 _OutlineColor;
-            float _OutlineMultiplier;
-            float _MinOutlineSize;
-            float _MaxOutlineSize;
-
-            #if _TRANSPARENCY_CUTOUT
-            #if _MAINTEXSCROLL_ON
-            float _MainTexUSpeed;
-            float _MainTexVSpeed;
-            #endif
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            float _CutOut;
-            float4 _Color;
-            #endif
-
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                #if _TRANSPARENCY_CUTOUT
-                float2 uv : TEXCOORD0;
-                float4 color : COLOR0;
-                #endif
-            };
-            struct v2f
-            {
-                float4 clipPos : SV_POSITION;
-                #if _TRANSPARENCY_CUTOUT
-                float2 uv : TEXCOORD0;
-                float4 color : COLOR0;
-                #endif
-            };
-            v2f vert(appdata v)
-            {
-                v2f o;
-                float4 clipPos = UnityObjectToClipPos(v.vertex);
-                float outlineMultiplier = clamp(clipPos.w * _OutlineMultiplier, _MinOutlineSize, _MaxOutlineSize);
-                o.clipPos = UnityObjectToClipPos(v.vertex + (v.normal * outlineMultiplier));
-                #if _OUTLINE_ON
-                #if _TRANSPARENCY_CUTOUT
-                #if _MAINTEXUV_UV0
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                #endif
-                #if _MAINTEXUV_UV1
-                o.uv = TRANSFORM_TEX(v.uv1, _MainTex);
-                #endif
-
-                #if _MAINTEXSCROLL_ON
-                o.uv += float2(_MainTexUSpeed, _MainTexVSpeed) * _Time;
-                #endif
-                o.color = v.color * _Color;
-                #endif
-                #endif
-                return o;
-            }
-            fixed4 frag(v2f i) : SV_Target
-            {
-                #if _OUTLINE_ON
-                #if _TRANSPARENCY_CUTOUT
-                fixed4 col = tex2D(_MainTex, i.uv) * i.color;
-                clip(col.a - _CutOut);
-                #endif
-                #else
-                clip(-1);
-                #endif
-                return _OutlineColor;
-            }
-            ENDCG
-        }
-
-        Pass
-        {
             Cull [_Cull]
+            Blend [_BlendSrc] [_BlendDst]
             CGPROGRAM
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT
             #pragma shader_feature _MAINTEXSCROLL_ON
@@ -235,6 +155,91 @@ Shader "LD CrewBoom/Character"
             }
             ENDCG
         }
+
+        Pass
+        {
+            Cull Front
+            Blend [_BlendSrc] [_BlendDst]
+            CGPROGRAM
+            #pragma shader_feature _OUTLINE_ON
+            #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT TRANSPARENCY_TRANSPARENT
+            #pragma shader_feature _MAINTEXSCROLL_ON
+            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+            fixed4 _OutlineColor;
+            float _OutlineMultiplier;
+            float _MinOutlineSize;
+            float _MaxOutlineSize;
+
+            #if _TRANSPARENCY_CUTOUT
+            #if _MAINTEXSCROLL_ON
+            float _MainTexUSpeed;
+            float _MainTexVSpeed;
+            #endif
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            float _CutOut;
+            float4 _Color;
+            #endif
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+                #if _TRANSPARENCY_CUTOUT
+                float2 uv : TEXCOORD0;
+                float4 color : COLOR0;
+                #endif
+            };
+            struct v2f
+            {
+                float4 clipPos : SV_POSITION;
+                #if _TRANSPARENCY_CUTOUT
+                float2 uv : TEXCOORD0;
+                float4 color : COLOR0;
+                #endif
+            };
+            v2f vert(appdata v)
+            {
+                v2f o;
+                float4 clipPos = UnityObjectToClipPos(v.vertex);
+                float outlineMultiplier = clamp(clipPos.w * _OutlineMultiplier, _MinOutlineSize, _MaxOutlineSize);
+                o.clipPos = UnityObjectToClipPos(v.vertex + (v.normal * outlineMultiplier));
+                #if _OUTLINE_ON
+                #if _TRANSPARENCY_CUTOUT
+                #if _MAINTEXUV_UV0
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                #endif
+                #if _MAINTEXUV_UV1
+                o.uv = TRANSFORM_TEX(v.uv1, _MainTex);
+                #endif
+
+                #if _MAINTEXSCROLL_ON
+                o.uv += float2(_MainTexUSpeed, _MainTexVSpeed) * _Time;
+                #endif
+                o.color = v.color * _Color;
+                #endif
+                #endif
+                return o;
+            }
+            fixed4 frag(v2f i) : SV_Target
+            {
+                #if _OUTLINE_ON
+                #if _TRANSPARENCY_CUTOUT
+                fixed4 col = tex2D(_MainTex, i.uv) * i.color;
+                clip(col.a - _CutOut);
+                #endif
+                #else
+                clip(-1);
+                #endif
+                return _OutlineColor;
+            }
+            ENDCG
+        }
+
         Pass
         {
             Tags {"LightMode" = "ShadowCaster"}

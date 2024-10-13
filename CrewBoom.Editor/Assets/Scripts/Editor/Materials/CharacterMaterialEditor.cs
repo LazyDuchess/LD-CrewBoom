@@ -7,7 +7,8 @@ public class CharacterMaterialEditor : ShaderGUI
     private enum Transparency
     {
         Opaque,
-        Cutout
+        Cutout,
+        Transparent
     }
 
     public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
@@ -47,7 +48,8 @@ public class CharacterMaterialEditor : ShaderGUI
         var transparencyOptions = new string[]
         {
             "Opaque",
-            "Cutout"
+            "Cutout",
+            "Transparent"
         };
 
         var transparencyMode = (Transparency)transparencyProperty.floatValue;
@@ -149,13 +151,23 @@ public class CharacterMaterialEditor : ShaderGUI
 
     private void ValidateTransparency(MaterialProperty[] properties, Material material, Transparency transparency)
     {
-        if (transparency > Transparency.Cutout)
+        var blendSrcProperty = ShaderGUI.FindProperty("_BlendSrc", properties);
+        var blendDestProperty = ShaderGUI.FindProperty("_BlendDst", properties);
+
+        if (transparency == Transparency.Transparent)
         {
-            transparency = Transparency.Opaque;
-            ShaderGUI.FindProperty("_Transparency", properties).floatValue = (float)Transparency.Opaque;
+            blendSrcProperty.floatValue = 5f;
+            blendDestProperty.floatValue = 10f;
         }
+        else
+        {
+            blendSrcProperty.floatValue = 1f;
+            blendDestProperty.floatValue = 0f;
+        }
+
         material.DisableKeyword("_TRANSPARENCY_OPAQUE");
         material.DisableKeyword("_TRANSPARENCY_CUTOUT");
+        material.DisableKeyword("_TRANSPARENCY_TRANSPARENT");
 
         switch (transparency)
         {
@@ -165,6 +177,10 @@ public class CharacterMaterialEditor : ShaderGUI
 
             case Transparency.Cutout:
                 material.EnableKeyword("_TRANSPARENCY_CUTOUT");
+                break;
+
+            case Transparency.Transparent:
+                material.EnableKeyword("_TRANSPARENCY_TRANSPARENT");
                 break;
         }
     }
@@ -179,6 +195,10 @@ public class CharacterMaterialEditor : ShaderGUI
 
             case Transparency.Cutout:
                 material.renderQueue = 2450;
+                break;
+
+            case Transparency.Transparent:
+                material.renderQueue = 3000;
                 break;
         }
     }

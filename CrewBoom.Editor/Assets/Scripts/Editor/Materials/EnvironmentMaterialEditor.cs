@@ -122,7 +122,6 @@ public class EnvironmentMaterialEditor : ShaderGUI
 
     private void ValidateTransparency(MaterialProperty[] properties, Material material, Transparency transparency)
     {
-        var zWriteProperty = ShaderGUI.FindProperty("_ZWrite", properties);
         var blendSrcProperty = ShaderGUI.FindProperty("_BlendSrc", properties);
         var blendDestProperty = ShaderGUI.FindProperty("_BlendDst", properties);
 
@@ -139,7 +138,6 @@ public class EnvironmentMaterialEditor : ShaderGUI
             blendSrcProperty.floatValue = 1f;
             blendDestProperty.floatValue = 0f;
         }
-        zWriteProperty.floatValue = transparency == Transparency.Transparent ? 0 : 1;
 
         switch (transparency)
         {
