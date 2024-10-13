@@ -13,6 +13,7 @@ public class PreviewCameraController : MonoBehaviour
     public float Yaw = 45f;
     public float Pitch = 45f;
     public float Distance = 1f;
+    public Light Light;
     private CharacterPreviewController _characterPreviewController;
     private void Start()
     {
@@ -41,6 +42,13 @@ public class PreviewCameraController : MonoBehaviour
                 Distance += Input.GetAxisRaw("Mouse Y") * ZoomSensitivity;
             }
         }
+
+        if (Input.GetKey(KeyCode.Mouse2))
+        {
+            if (Light != null)
+                Light.transform.rotation = transform.rotation;
+        }
+
         if (Input.GetKey(KeyCode.D))
         {
             Pivot += transform.right * moveSpeed * Time.unscaledDeltaTime;
