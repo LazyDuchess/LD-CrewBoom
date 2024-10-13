@@ -20,6 +20,7 @@ public class CharacterPreviewController : MonoBehaviour
     public PreviewCharacter Character = null;
     private bool _paused = false;
     private float _timeScale = 1f;
+    private DynamicBone[] _dynamicBones;
 
     public static CharacterPreviewController Instance { get; private set; }
     private void Awake()
@@ -28,6 +29,7 @@ public class CharacterPreviewController : MonoBehaviour
         var character = Instantiate(CharacterPrefab);
         Character = character.AddComponent<PreviewCharacter>();
         Character.Initialize(PreviewController);
+        _dynamicBones = Character.gameObject.GetComponentsInChildren<DynamicBone>(true);
     }
     
     public void SetPaused(Toggle toggle)
@@ -66,6 +68,14 @@ public class CharacterPreviewController : MonoBehaviour
             Time.timeScale = 0f;
         else
             Time.timeScale = slider.value;
+    }
+
+    public void SetMovementSpeed(Slider slider)
+    {
+        foreach(var dynamicBone in _dynamicBones)
+        {
+            dynamicBone.m_Force = new Vector3(0f, 0f, -slider.value);
+        }
     }
 
     public void SetSprayCan(Toggle toggle)
