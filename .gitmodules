@@ -1,3 +1,4 @@
 [submodule "CrewBoom.Editor/Assets/Shaders/Pupsi/Pupsi-BRC-Shader"]
 	path = CrewBoom.Editor/Assets/Shaders/Pupsi/Pupsi-BRC-Shader
 	url = https://github.com/pupsicola/Pupsi-BRC-Shader
+	ignore = untracked
