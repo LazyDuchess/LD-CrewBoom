@@ -10,8 +10,10 @@ Shader "LD CrewBoom/Character"
 
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _MainTexUV ("UV Map", Float) = 0
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionMaskUV ("UV Map", Float) = 0
         [HideInInspector] [Toggle] _MainTexScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionScroll ("Scroll", Float) = 0
+        [HideInInspector] [Toggle] _EmissionMaskScroll ("Scroll", Float) = 0
 
         [HideInInspector] _MainTexUSpeed ("U Speed", Float) = 0
         [HideInInspector] _MainTexVSpeed ("V Speed", Float) = 0
@@ -19,9 +21,13 @@ Shader "LD CrewBoom/Character"
         [HideInInspector] _EmissionUSpeed ("U Speed", Float) = 0
         [HideInInspector] _EmissionVSpeed ("V Speed", Float) = 0
 
+        [HideInInspector] _EmissionMaskUSpeed ("U Speed", Float) = 0
+        [HideInInspector] _EmissionMaskVSpeed ("V Speed", Float) = 0
+
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
+        _EmissionMask ("Emission Mask", 2D) = "white" {}
 
         [Toggle] _Outline ("Outline", Float) = 1
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
@@ -52,6 +58,7 @@ Shader "LD CrewBoom/Character"
             #pragma shader_feature _EMISSIONSCROLL_ON
             #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1 _MAINTEXUV_SCREEN
             #pragma shader_feature _EMISSIONUV_UV0 _EMISSIONUV_UV1 _EMISSIONUV_SCREEN
+            #pragma shader_feature _EMISSIONMASKUV_UV0 _EMISSIONMASKUV_UV1 _EMISSIONMASKUV_SCREEN
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -70,6 +77,7 @@ Shader "LD CrewBoom/Character"
             {
                 float2 uv : TEXCOORD0;
                 float2 uv2 : TEXCOORD2;
+                float2 uv3 : TEXCOORD3;
                 float4 vertex : SV_POSITION;
                 float3 normal : TEXCOORD1;
                 float4 color : COLOR0;
@@ -80,6 +88,8 @@ Shader "LD CrewBoom/Character"
             float4 _MainTex_ST;
             sampler2D _Emission;
             float4 _Emission_ST;
+            sampler2D _EmissionMask;
+            float4 _EmissionMask_ST;
             float4 _Color;
             float4 _ShadeLightTint;
             float4 _ShadeShadowTint;
@@ -94,6 +104,11 @@ Shader "LD CrewBoom/Character"
             #if _EMISSIONSCROLL_ON
             float _EmissionUSpeed;
             float _EmissionVSpeed;
+            #endif
+
+            #if _EMISSIONMASKSCROLL_ON
+            float _EmissionMaskUSpeed;
+            float _EmissionMaskVSpeed;
             #endif
 
             v2f vert(appdata v)
@@ -120,11 +135,24 @@ Shader "LD CrewBoom/Character"
                 o.uv2 = UnityObjectToViewPos(v.vertex).xy;
                 #endif
 
+                #if _EMISSIONMASKUV_UV0
+                o.uv3 = TRANSFORM_TEX(v.uv, _EmissionMask);
+                #endif
+                #if _EMISSIONMASKUV_UV1
+                o.uv3 = TRANSFORM_TEX(v.uv1, _EmissionMask);
+                #endif
+                #if _EMISSIONMASKUV_SCREEN
+                o.uv3 = UnityObjectToViewPos(v.vertex).xy;
+                #endif
+
                 #if _MAINTEXSCROLL_ON
                 o.uv += float2(_MainTexUSpeed, _MainTexVSpeed) * _Time;
                 #endif
                 #if _EMISSIONSCROLL_ON
                 o.uv2 += float2(_EmissionUSpeed, _EmissionVSpeed) * _Time;
+                #endif
+                #if _EMISSIONMASKSCROLL_ON
+                o.uv3 += float2(_EmissionMaskUSpeed, _EmissionMaskVSpeed) * _Time;
                 #endif
 
                 o.normal = UnityObjectToWorldNormal(v.normal);
@@ -151,7 +179,7 @@ Shader "LD CrewBoom/Character"
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
                 //col.a = 1.0;
                 col.rgb *= lightColor * lerp(1, _LightColor0.rgb, _ShadeSunLight);
-                fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb;
+                fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb * tex2D(_EmissionMask, i.uv3).r;
                 col.rgb += emissionCol.rgb;
                 #if _TRANSPARENCY_CUTOUT
                 clip(col.a - _CutOut);

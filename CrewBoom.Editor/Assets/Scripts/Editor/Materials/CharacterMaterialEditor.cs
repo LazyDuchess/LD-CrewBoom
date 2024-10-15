@@ -114,13 +114,13 @@ public class CharacterMaterialEditor : ShaderGUI
             var outlineProperty = ShaderGUI.FindProperty("_Outline", properties);
             if (outlineProperty.floatValue == 0f && property != outlineProperty && property.name.Contains("Outline"))
                 continue;
-            if (property.name == "_MainTex" || property.name == "_Emission")
+            if (property.name == "_MainTex" || property.name == "_Emission" || property.name == "_EmissionMask")
             {
                 EditorGUILayout.BeginVertical("GroupBox");
             }
             materialEditor.ShaderProperty(property, property.displayName);
             
-            if (property.name == "_MainTex" || property.name == "_Emission")
+            if (property.name == "_MainTex" || property.name == "_Emission" || property.name == "_EmissionMask")
             {
                 var uvProperty = ShaderGUI.FindProperty($"{property.name}UV", properties);
                 var scrollProperty = ShaderGUI.FindProperty($"{property.name}Scroll", properties);
