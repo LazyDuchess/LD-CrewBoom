@@ -8,8 +8,8 @@ Shader "LD CrewBoom/Character"
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull Mode", Float) = 2
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
 
-        [HideInInspector] [KeywordEnum(UV0, UV1)] _MainTexUV ("UV Map", Float) = 0
-        [HideInInspector] [KeywordEnum(UV0, UV1)] _EmissionUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _MainTexUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionUV ("UV Map", Float) = 0
         [HideInInspector] [Toggle] _MainTexScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionScroll ("Scroll", Float) = 0
 
@@ -50,13 +50,13 @@ Shader "LD CrewBoom/Character"
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT
             #pragma shader_feature _MAINTEXSCROLL_ON
             #pragma shader_feature _EMISSIONSCROLL_ON
-            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1
-            #pragma shader_feature _EMISSIONUV_UV0 _EMISSIONUV_UV1
+            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1 _MAINTEXUV_SCREEN
+            #pragma shader_feature _EMISSIONUV_UV0 _EMISSIONUV_UV1 _EMISSIONUV_SCREEN
             #pragma vertex vert
             #pragma fragment frag
-            #include "BRCCommon.cginc"
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
+            #include "BRCCommon.cginc"
 
             struct appdata
             {
@@ -100,12 +100,14 @@ Shader "LD CrewBoom/Character"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-
                 #if _MAINTEXUV_UV0
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 #endif
                 #if _MAINTEXUV_UV1
                 o.uv = TRANSFORM_TEX(v.uv1, _MainTex);
+                #endif
+                #if _MAINTEXUV_SCREEN
+                o.uv = UnityObjectToViewPos(v.vertex).xy;
                 #endif
 
                 #if _EMISSIONUV_UV0
@@ -113,6 +115,9 @@ Shader "LD CrewBoom/Character"
                 #endif
                 #if _EMISSIONUV_UV1
                 o.uv2 = TRANSFORM_TEX(v.uv1, _Emission);
+                #endif
+                #if _EMISSIONUV_SCREEN
+                o.uv2 = UnityObjectToViewPos(v.vertex).xy;
                 #endif
 
                 #if _MAINTEXSCROLL_ON
