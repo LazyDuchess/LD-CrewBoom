@@ -158,7 +158,7 @@ Shader "LD CrewBoom/Character"
                 o.uv = TRANSFORM_TEX(v.uv1, _MainTex);
                 #endif
                 #if _MAINTEXUV_SCREEN
-                o.uv = UnityObjectToViewPos(v.vertex).xy;
+                o.uv = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _MainTex);
                 #endif
 
                 #if _OVERLAYTEXUV_UV0
@@ -168,7 +168,7 @@ Shader "LD CrewBoom/Character"
                 o.uv4 = TRANSFORM_TEX(v.uv1, _OverlayTex);
                 #endif
                 #if _OVERLAYTEXUV_SCREEN
-                o.uv4 = UnityObjectToViewPos(v.vertex).xy;
+                o.uv4 = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _OverlayTex);
                 #endif
 
                 #if _OVERLAYMASKUV_UV0
@@ -178,7 +178,7 @@ Shader "LD CrewBoom/Character"
                 o.uv5 = TRANSFORM_TEX(v.uv1, _OverlayMask);
                 #endif
                 #if _OVERLAYMASKUV_SCREEN
-                o.uv5 = UnityObjectToViewPos(v.vertex).xy;
+                o.uv5 = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _OverlayMask);
                 #endif
 
                 #if _EMISSIONUV_UV0
@@ -188,7 +188,7 @@ Shader "LD CrewBoom/Character"
                 o.uv2 = TRANSFORM_TEX(v.uv1, _Emission);
                 #endif
                 #if _EMISSIONUV_SCREEN
-                o.uv2 = UnityObjectToViewPos(v.vertex).xy;
+                o.uv2 = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _Emission);
                 #endif
 
                 #if _EMISSIONMASKUV_UV0
@@ -198,7 +198,7 @@ Shader "LD CrewBoom/Character"
                 o.uv3 = TRANSFORM_TEX(v.uv1, _EmissionMask);
                 #endif
                 #if _EMISSIONMASKUV_SCREEN
-                o.uv3 = UnityObjectToViewPos(v.vertex).xy;
+                o.uv3 = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _EmissionMask);
                 #endif
 
                 #if _MAINTEXSCROLL_ON
