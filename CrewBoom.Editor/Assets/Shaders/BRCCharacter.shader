@@ -9,14 +9,24 @@ Shader "LD CrewBoom/Character"
         [HideInInspector] _CutOut("Alpha Cutout", Range(0,1)) = 0.1
 
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _MainTexUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _OverlayTexUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _OverlayMaskUV ("UV Map", Float) = 0
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionUV ("UV Map", Float) = 0
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionMaskUV ("UV Map", Float) = 0
         [HideInInspector] [Toggle] _MainTexScroll ("Scroll", Float) = 0
+        [HideInInspector] [Toggle] _OverlayTexScroll ("Scroll", Float) = 0
+        [HideInInspector] [Toggle] _OverlayMaskScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionMaskScroll ("Scroll", Float) = 0
 
         [HideInInspector] _MainTexUSpeed ("U Speed", Float) = 0
         [HideInInspector] _MainTexVSpeed ("V Speed", Float) = 0
+
+        [HideInInspector] _OverlayTexUSpeed ("U Speed", Float) = 0
+        [HideInInspector] _OverlayTexVSpeed ("V Speed", Float) = 0
+
+        [HideInInspector] _OverlayMaskUSpeed ("U Speed", Float) = 0
+        [HideInInspector] _OverlayMaskVSpeed ("V Speed", Float) = 0
 
         [HideInInspector] _EmissionUSpeed ("U Speed", Float) = 0
         [HideInInspector] _EmissionVSpeed ("V Speed", Float) = 0
@@ -26,6 +36,9 @@ Shader "LD CrewBoom/Character"
 
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
+        [KeywordEnum(Mix, Add)] _OverlayMode("Overlay Mode", Float) = 0
+        _OverlayTex ("Overlay", 2D) = "black" {}
+        _OverlayMask ("Overlay Mask", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
         _EmissionMask ("Emission Mask", 2D) = "white" {}
 
@@ -55,10 +68,16 @@ Shader "LD CrewBoom/Character"
             CGPROGRAM
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT
             #pragma shader_feature _MAINTEXSCROLL_ON
+            #pragma shader_feature _OVERLAYTEXSCROLL_ON
+            #pragma shader_feature _OVERLAYMASKSCROLL_ON
             #pragma shader_feature _EMISSIONSCROLL_ON
+            #pragma shader_feature _EMISSIONMASKSCROLL_ON
             #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1 _MAINTEXUV_SCREEN
+            #pragma shader_feature _OVERLAYTEXUV_UV0 _OVERLAYTEXUV_UV1 _OVERLAYTEXUV_SCREEN
+            #pragma shader_feature _OVERLAYMASKUV_UV0 _OVERLAYMASKUV_UV1 _OVERLAYMASKUV_SCREEN
             #pragma shader_feature _EMISSIONUV_UV0 _EMISSIONUV_UV1 _EMISSIONUV_SCREEN
             #pragma shader_feature _EMISSIONMASKUV_UV0 _EMISSIONMASKUV_UV1 _EMISSIONMASKUV_SCREEN
+            #pragma shader_feature _OVERLAYMODE_MIX _OVERLAYMODE_ADD
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -78,6 +97,8 @@ Shader "LD CrewBoom/Character"
                 float2 uv : TEXCOORD0;
                 float2 uv2 : TEXCOORD2;
                 float2 uv3 : TEXCOORD3;
+                float2 uv4 : TEXCOORD4;
+                float2 uv5 : TEXCOORD5;
                 float4 vertex : SV_POSITION;
                 float3 normal : TEXCOORD1;
                 float4 color : COLOR0;
@@ -90,6 +111,10 @@ Shader "LD CrewBoom/Character"
             float4 _Emission_ST;
             sampler2D _EmissionMask;
             float4 _EmissionMask_ST;
+            sampler2D _OverlayTex;
+            float4 _OverlayTex_ST;
+            sampler2D _OverlayMask;
+            float4 _OverlayMask_ST;
             float4 _Color;
             float4 _ShadeLightTint;
             float4 _ShadeShadowTint;
@@ -99,6 +124,16 @@ Shader "LD CrewBoom/Character"
             #if _MAINTEXSCROLL_ON
             float _MainTexUSpeed;
             float _MainTexVSpeed;
+            #endif
+
+            #if _OVERLAYTEXSCROLL_ON
+            float _OverlayTexUSpeed;
+            float _OverlayTexVSpeed;
+            #endif
+
+            #if _OVERLAYMASKSCROLL_ON
+            float _OverlayMaskUSpeed;
+            float _OverlayMaskVSpeed;
             #endif
 
             #if _EMISSIONSCROLL_ON
@@ -115,6 +150,7 @@ Shader "LD CrewBoom/Character"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+
                 #if _MAINTEXUV_UV0
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 #endif
@@ -123,6 +159,26 @@ Shader "LD CrewBoom/Character"
                 #endif
                 #if _MAINTEXUV_SCREEN
                 o.uv = UnityObjectToViewPos(v.vertex).xy;
+                #endif
+
+                #if _OVERLAYTEXUV_UV0
+                o.uv4 = TRANSFORM_TEX(v.uv, _OverlayTex);
+                #endif
+                #if _OVERLAYTEXUV_UV1
+                o.uv4 = TRANSFORM_TEX(v.uv1, _OverlayTex);
+                #endif
+                #if _OVERLAYTEXUV_SCREEN
+                o.uv4 = UnityObjectToViewPos(v.vertex).xy;
+                #endif
+
+                #if _OVERLAYMASKUV_UV0
+                o.uv5 = TRANSFORM_TEX(v.uv, _OverlayMask);
+                #endif
+                #if _OVERLAYMASKUV_UV1
+                o.uv5 = TRANSFORM_TEX(v.uv1, _OverlayMask);
+                #endif
+                #if _OVERLAYMASKUV_SCREEN
+                o.uv5 = UnityObjectToViewPos(v.vertex).xy;
                 #endif
 
                 #if _EMISSIONUV_UV0
@@ -154,6 +210,12 @@ Shader "LD CrewBoom/Character"
                 #if _EMISSIONMASKSCROLL_ON
                 o.uv3 += float2(_EmissionMaskUSpeed, _EmissionMaskVSpeed) * _Time;
                 #endif
+                #if _OVERLAYTEXSCROLL_ON
+                o.uv4 += float2(_OverlayTexUSpeed, _OverlayTexVSpeed) * _Time;
+                #endif
+                #if _OVERLAYMASKSCROLL_ON
+                o.uv5 += float2(_OverlayMaskUSpeed, _OverlayMaskVSpeed) * _Time;
+                #endif
 
                 o.normal = UnityObjectToWorldNormal(v.normal);
                 o.color = v.color * _Color;
@@ -177,6 +239,14 @@ Shader "LD CrewBoom/Character"
                 float4 sColor = lerp(1, ShadowColor, _ShadeEnvShadow) * _ShadeShadowTint;
                 float4 lightColor = lerp(sColor, lColor, lighting);
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
+                fixed4 overlayCol = tex2D(_OverlayTex, i.uv4) * i.color;
+                overlayCol.a *= tex2D(_OverlayMask, i.uv5).r;
+                #if _OVERLAYMODE_MIX
+                col.rgb = lerp(col.rgb, overlayCol.rgb, overlayCol.a);
+                #endif
+                #if _OVERLAYMODE_ADD
+                col.rgb += overlayCol.rgb * overlayCol.a;
+                #endif
                 //col.a = 1.0;
                 col.rgb *= lightColor * lerp(1, _LightColor0.rgb, _ShadeSunLight);
                 fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb * tex2D(_EmissionMask, i.uv3).r;

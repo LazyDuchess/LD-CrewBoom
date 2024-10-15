@@ -36,6 +36,11 @@ public class CharacterMaterialEditor : ShaderGUI
         ValidateRenderQueue(properties, material, (Transparency)transparencyProperty.floatValue);
     }
 
+    private bool IsTextureProperty(string property)
+    {
+        return (property == "_MainTex" || property == "_Emission" || property == "_EmissionMask" || property == "_OverlayTex" || property == "_OverlayMask");
+    }
+
     // Draw the inspector.
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
     {
@@ -114,13 +119,13 @@ public class CharacterMaterialEditor : ShaderGUI
             var outlineProperty = ShaderGUI.FindProperty("_Outline", properties);
             if (outlineProperty.floatValue == 0f && property != outlineProperty && property.name.Contains("Outline"))
                 continue;
-            if (property.name == "_MainTex" || property.name == "_Emission" || property.name == "_EmissionMask")
+            if (IsTextureProperty(property.name))
             {
                 EditorGUILayout.BeginVertical("GroupBox");
             }
             materialEditor.ShaderProperty(property, property.displayName);
             
-            if (property.name == "_MainTex" || property.name == "_Emission" || property.name == "_EmissionMask")
+            if (IsTextureProperty(property.name))
             {
                 var uvProperty = ShaderGUI.FindProperty($"{property.name}UV", properties);
                 var scrollProperty = ShaderGUI.FindProperty($"{property.name}Scroll", properties);
