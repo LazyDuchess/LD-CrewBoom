@@ -38,7 +38,7 @@ public class CharacterMaterialEditor : ShaderGUI
 
     private bool IsTextureProperty(string property)
     {
-        return (property == "_MainTex" || property == "_Emission" || property == "_EmissionMask" || property == "_OverlayTex" || property == "_OverlayMask");
+        return (property == "_MainTex" || property == "_Emission" || property == "_EmissionMask" || property == "_OverlayTex" || property == "_OverlayMask" || property == "_OutlineMask");
     }
 
     // Draw the inspector.

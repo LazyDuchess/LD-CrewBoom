@@ -13,11 +13,13 @@ Shader "LD CrewBoom/Character"
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _OverlayMaskUV ("UV Map", Float) = 0
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionUV ("UV Map", Float) = 0
         [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _EmissionMaskUV ("UV Map", Float) = 0
+        [HideInInspector] [KeywordEnum(UV0, UV1, Screen)] _OutlineMaskUV ("UV Map", Float) = 0
         [HideInInspector] [Toggle] _MainTexScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _OverlayTexScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _OverlayMaskScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionScroll ("Scroll", Float) = 0
         [HideInInspector] [Toggle] _EmissionMaskScroll ("Scroll", Float) = 0
+        [HideInInspector] [Toggle] _OutlineMaskScroll ("Scroll", Float) = 0
 
         [HideInInspector] _MainTexUSpeed ("U Speed", Float) = 0
         [HideInInspector] _MainTexVSpeed ("V Speed", Float) = 0
@@ -34,6 +36,9 @@ Shader "LD CrewBoom/Character"
         [HideInInspector] _EmissionMaskUSpeed ("U Speed", Float) = 0
         [HideInInspector] _EmissionMaskVSpeed ("V Speed", Float) = 0
 
+        [HideInInspector] _OutlineMaskUSpeed ("U Speed", Float) = 0
+        [HideInInspector] _OutlineMaskVSpeed ("V Speed", Float) = 0
+
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
         [KeywordEnum(Mix, Add, Multiply)] _OverlayMode("Overlay Mode", Float) = 0
@@ -41,6 +46,7 @@ Shader "LD CrewBoom/Character"
         _OverlayMask ("Overlay Mask", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
         _EmissionMask ("Emission Mask", 2D) = "white" {}
+        _OutlineMask ("Outline Mask", 2D) = "white" {}
 
         [Toggle] _Outline ("Outline", Float) = 1
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
@@ -271,7 +277,9 @@ Shader "LD CrewBoom/Character"
             #pragma shader_feature _OUTLINE_ON
             #pragma shader_feature _TRANSPARENCY_OPAQUE _TRANSPARENCY_CUTOUT TRANSPARENCY_TRANSPARENT
             #pragma shader_feature _MAINTEXSCROLL_ON
-            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1
+            #pragma shader_feature _MAINTEXUV_UV0 _MAINTEXUV_UV1 _MAINTEXUV_SCREEN
+            #pragma shader_feature _OUTLINEMASKSCROLL_ON
+            #pragma shader_feature _OUTLINEMASKUV_UV0 _OUTLINEMASKUV_UV1 _OUTLINEMASKUV_SCREEN
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -291,13 +299,18 @@ Shader "LD CrewBoom/Character"
             float _CutOut;
             float4 _Color;
             #endif
+            sampler2D _OutlineMask;
+            float4 _OutlineMask_ST;
+            float _OutlineMaskUSpeed;
+            float _OutlineMaskVSpeed;
 
             struct appdata
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
-                #if _TRANSPARENCY_CUTOUT
                 float2 uv : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                #if _TRANSPARENCY_CUTOUT
                 float4 color : COLOR0;
                 #endif
             };
@@ -314,7 +327,21 @@ Shader "LD CrewBoom/Character"
                 v2f o;
                 float4 clipPos = UnityObjectToClipPos(v.vertex);
                 float outlineMultiplier = clamp(clipPos.w * _OutlineMultiplier, _MinOutlineSize, _MaxOutlineSize);
-                o.clipPos = UnityObjectToClipPos(v.vertex + (v.normal * outlineMultiplier));
+                float2 multiplierUv = float2(0,0);
+                #if _OUTLINEMASKUV_UV0
+                multiplierUv = TRANSFORM_TEX(v.uv, _OutlineMask);
+                #endif
+                #if _OUTLINEMASKUV_UV1
+                multiplierUv = TRANSFORM_TEX(v.uv1, _OutlineMask);
+                #endif
+                #if _OUTLINEMASKUV_SCREEN
+                multiplierUv = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _OutlineMask);
+                #endif
+                #if _OUTLINEMASKSCROLL_ON
+                multiplierUv += float2(_OutlineMaskUSpeed, _OutlineMaskVSpeed) * _Time;
+                #endif
+                float outlineMask = tex2Dlod(_OutlineMask, float4(multiplierUv, 0, 0)).r;
+                o.clipPos = UnityObjectToClipPos(v.vertex + (v.normal * outlineMultiplier * outlineMask));
                 #if _OUTLINE_ON
                 #if _TRANSPARENCY_CUTOUT
                 #if _MAINTEXUV_UV0
@@ -322,6 +349,9 @@ Shader "LD CrewBoom/Character"
                 #endif
                 #if _MAINTEXUV_UV1
                 o.uv = TRANSFORM_TEX(v.uv1, _MainTex);
+                #endif
+                #if _MAINTEXUV_SCREEN
+                o.uv = TRANSFORM_TEX(UnityObjectToViewPos(v.vertex).xy, _MainTex);
                 #endif
 
                 #if _MAINTEXSCROLL_ON
