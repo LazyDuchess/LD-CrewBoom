@@ -36,7 +36,7 @@ Shader "LD CrewBoom/Character"
 
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
-        [KeywordEnum(Mix, Add)] _OverlayMode("Overlay Mode", Float) = 0
+        [KeywordEnum(Mix, Add, Multiply)] _OverlayMode("Overlay Mode", Float) = 0
         _OverlayTex ("Overlay", 2D) = "black" {}
         _OverlayMask ("Overlay Mask", 2D) = "white" {}
         _Emission ("Emission", 2D) = "black" {}
@@ -77,7 +77,7 @@ Shader "LD CrewBoom/Character"
             #pragma shader_feature _OVERLAYMASKUV_UV0 _OVERLAYMASKUV_UV1 _OVERLAYMASKUV_SCREEN
             #pragma shader_feature _EMISSIONUV_UV0 _EMISSIONUV_UV1 _EMISSIONUV_SCREEN
             #pragma shader_feature _EMISSIONMASKUV_UV0 _EMISSIONMASKUV_UV1 _EMISSIONMASKUV_SCREEN
-            #pragma shader_feature _OVERLAYMODE_MIX _OVERLAYMODE_ADD
+            #pragma shader_feature _OVERLAYMODE_MIX _OVERLAYMODE_ADD _OVERLAYMODE_MULTIPLY
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -238,8 +238,8 @@ Shader "LD CrewBoom/Character"
                 float4 lColor = lerp(1, LightColor, _ShadeEnvLight) * _ShadeLightTint;
                 float4 sColor = lerp(1, ShadowColor, _ShadeEnvShadow) * _ShadeShadowTint;
                 float4 lightColor = lerp(sColor, lColor, lighting);
-                fixed4 col = tex2D(_MainTex, i.uv) * i.color;
-                fixed4 overlayCol = tex2D(_OverlayTex, i.uv4) * i.color;
+                fixed4 col = tex2D(_MainTex, i.uv);
+                fixed4 overlayCol = tex2D(_OverlayTex, i.uv4);
                 overlayCol.a *= tex2D(_OverlayMask, i.uv5).r;
                 #if _OVERLAYMODE_MIX
                 col.rgb = lerp(col.rgb, overlayCol.rgb, overlayCol.a);
@@ -247,6 +247,10 @@ Shader "LD CrewBoom/Character"
                 #if _OVERLAYMODE_ADD
                 col.rgb += overlayCol.rgb * overlayCol.a;
                 #endif
+                #if _OVERLAYMODE_MULTIPLY
+                col.rgb *= overlayCol.rgb * overlayCol.a;
+                #endif
+                col *= i.color;
                 //col.a = 1.0;
                 col.rgb *= lightColor * lerp(1, _LightColor0.rgb, _ShadeSunLight);
                 fixed3 emissionCol = tex2D(_Emission, i.uv2).rgb * tex2D(_EmissionMask, i.uv3).r;
