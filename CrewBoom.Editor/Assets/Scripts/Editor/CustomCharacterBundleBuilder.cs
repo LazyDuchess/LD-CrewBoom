@@ -125,6 +125,7 @@ public static class CustomCharacterBundleBuilder
                 string pathWithoutExtension = Path.Combine(BUNDLE_OUTPUT_FOLDER, fileWithoutExtension);
                 string bundleManifestPath = projectRelativePath + ".manifest";
                 string jsonPath = pathWithoutExtension + ".json";
+                string txtPath = pathWithoutExtension + ".txt";
                 if (File.Exists(bundleManifestPath))
                 {
                     File.Delete(bundleManifestPath);
@@ -135,6 +136,7 @@ public static class CustomCharacterBundleBuilder
                     CharacterToReplace = nameof(BrcCharacter.None)
                 };
                 File.WriteAllText(jsonPath, JsonUtility.ToJson(config, true));
+                File.WriteAllText(txtPath, id);
 
                 Debug.Log($"Size of AssetBundle {projectRelativePath} is {new FileInfo(projectRelativePath).Length * 0.0009765625} KB");
 
