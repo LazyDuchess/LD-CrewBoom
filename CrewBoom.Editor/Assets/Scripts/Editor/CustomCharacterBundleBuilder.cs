@@ -154,6 +154,7 @@ public static class CustomCharacterBundleBuilder
                         {
                             File.Copy(projectRelativePath, targetBundle, true);
                             File.Copy(jsonPath, Path.Combine(targetDirectory, Path.GetFileName(jsonPath)), true);
+                            File.Copy(txtPath, Path.Combine(targetDirectory, Path.GetFileName(txtPath)), true);
                             if (Preferences.OpenFileExplorerOnBuild)
                                 EditorUtility.RevealInFinder(targetBundle);
                         }
