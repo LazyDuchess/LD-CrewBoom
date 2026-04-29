@@ -19,6 +19,7 @@ namespace CrewBoomMono
         public bool HasGraffiti;
         public BrcCharacter IdleDance;
         public string BoEIdleDance;
+        public bool BoEIdleDanceVanilla;
 
         public void FromCharacter(CharacterDefinition character)
         {
@@ -31,6 +32,7 @@ namespace CrewBoomMono
             GrafAuthor = character.GraffitiArtist;
             IdleDance = character.BounceAnimation;
             BoEIdleDance = character.BoEBounceAnimation;
+            BoEIdleDanceVanilla = character.BoEBounceAnimationVanilla;
         }
 
         public void Write(BinaryWriter writer)
@@ -45,6 +47,7 @@ namespace CrewBoomMono
             writer.Write(GrafAuthor);
             writer.Write((int)IdleDance);
             writer.Write(BoEIdleDance);
+            writer.Write(BoEIdleDanceVanilla);
         }
 
         public void Read(BinaryReader reader)
@@ -59,6 +62,7 @@ namespace CrewBoomMono
             GrafAuthor = reader.ReadString();
             IdleDance = (BrcCharacter)reader.ReadInt32();
             BoEIdleDance = reader.ReadString();
+            BoEIdleDanceVanilla = reader.ReadBoolean();
         }
     }
 }

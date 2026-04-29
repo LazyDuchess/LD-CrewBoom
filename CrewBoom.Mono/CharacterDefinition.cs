@@ -16,6 +16,7 @@ namespace CrewBoomMono
 
         public UnlockType UnlockType = UnlockType.AlwaysUnlocked;
         public string BoEBounceAnimation = "";
+        public bool BoEBounceAnimationVanilla = false;
 
         public SkinnedMeshRenderer[] Renderers;
         //This really sucks but I have to do it as Unity still doesn't support serialized types from a DLL
