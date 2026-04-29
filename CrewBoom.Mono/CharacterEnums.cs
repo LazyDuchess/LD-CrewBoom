@@ -37,4 +37,11 @@
         Skateboard,
         Skates
     }
+
+    public enum UnlockType
+    {
+        AlwaysUnlocked,
+        Unlockable,
+        Locked
+    }
 }

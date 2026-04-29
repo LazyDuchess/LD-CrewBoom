@@ -14,6 +14,9 @@ namespace CrewBoomMono
         public BrcCharacter BounceAnimation = BrcCharacter.Red;
         public BrcMovestyle DefaultMovestyle = BrcMovestyle.Skateboard;
 
+        public UnlockType UnlockType = UnlockType.AlwaysUnlocked;
+        public string BoEBounceAnimation = "";
+
         public SkinnedMeshRenderer[] Renderers;
         //This really sucks but I have to do it as Unity still doesn't support serialized types from a DLL
         //that isn't shipped with the game itself but loaded with Assembly.Load (which BepInEx probably does)
