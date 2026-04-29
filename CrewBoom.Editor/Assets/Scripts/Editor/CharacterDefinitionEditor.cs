@@ -66,6 +66,10 @@ public class CharacterDefinitionEditor : Editor
     private SerializedProperty _bundleOverrideFilename;
     private SerializedProperty _bundleFilename;
 
+    private SerializedProperty _boeBounce;
+    private SerializedProperty _unlockType;
+
+
     private const int OUTFIT_AMOUNT = 4;
     private bool[][] _materialFoldouts;
     private bool[][] _errorOutfits;
@@ -143,6 +147,8 @@ public class CharacterDefinitionEditor : Editor
         _bundleId = serializedObject.FindProperty(nameof(CharacterDefinition.Id));
         _bundleOverrideFilename = serializedObject.FindProperty(nameof(CharacterDefinition.OverrideBundleFilename));
         _bundleFilename = serializedObject.FindProperty(nameof(CharacterDefinition.BundleFilename));
+        _boeBounce = serializedObject.FindProperty(nameof(CharacterDefinition.BoEBounceAnimation));
+        _unlockType = serializedObject.FindProperty(nameof(CharacterDefinition.UnlockType));
 
         _invalidMessage = EditorGUIUtility.IconContent("Invalid@2x");
         _invalidMessage.text = "Character is not valid and can not be built.";
@@ -671,6 +677,32 @@ public class CharacterDefinitionEditor : Editor
                     }
                 }
                 EditorGUILayout.PropertyField(_characterMovestyle, new GUIContent("Move Style"));
+
+                EditorGUILayout.Space();
+
+                EditorGUILayout.LabelField("LD CrewBoom", EditorStyles.boldLabel);
+
+                EditorGUILayout.PropertyField(_unlockType, new GUIContent("Unlock Method"));
+
+                if (_unlockType.intValue == (int)UnlockType.AlwaysUnlocked)
+                {
+                    EditorGUILayout.HelpBox("The character will show up in the Cypher normally.", MessageType.Info);
+                }
+                else if (_unlockType.intValue == (int)UnlockType.Unlockable)
+                {
+                    EditorGUILayout.HelpBox("Mods should interface with LD CrewBoom to unlock the character for your save.", MessageType.Info);
+                }
+                else if (_unlockType.intValue == (int)UnlockType.Locked)
+                {
+                    EditorGUILayout.HelpBox("Character won't be available in the Cypher.", MessageType.Info);
+                }
+
+                EditorGUILayout.PropertyField(_boeBounce, new GUIContent("Bunch of Emotes Idle Dance"));
+
+                if (!string.IsNullOrWhiteSpace(_boeBounce.stringValue))
+                {
+                    EditorGUILayout.HelpBox("The regular Idle Dance will be used if the animation bundle isn't installed.", MessageType.Info);
+                }
 
                 EditorGUILayout.Space();
 
