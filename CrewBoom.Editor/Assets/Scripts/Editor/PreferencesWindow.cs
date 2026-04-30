@@ -13,7 +13,7 @@ public class PreferencesWindow : EditorWindow
         EditorCoroutineUtility.StartCoroutineOwnerless(UpdateUtility.FetchLatestUpdate());
         var window = GetWindow<PreferencesWindow>();
         window.titleContent = new GUIContent("CrewBoom Preferences");
-        window.maxSize = new Vector2(1200.0f, 290.0f);
+        window.maxSize = new Vector2(1200.0f, 310.0f);
         window.minSize = new Vector2(600.0f, window.maxSize.y);
     }
 
@@ -65,6 +65,10 @@ public class PreferencesWindow : EditorWindow
         var checkForUpdates = EditorGUILayout.Toggle("Automatically Check for Updates", currentCheckForUpdates);
         if (checkForUpdates != currentCheckForUpdates)
             Preferences.AutoUpdate = checkForUpdates;
+        var currentOptimizationWarnings = Preferences.OptimizationWarnings;
+        var optimizationWarnings = EditorGUILayout.Toggle("Display Optimization Warnings on Build", currentOptimizationWarnings);
+        if (optimizationWarnings != currentOptimizationWarnings)
+            Preferences.OptimizationWarnings = optimizationWarnings;
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField($"LD CrewBoom Version: {CrewBoomVersion.Version}");
         var upToDateLabel = "";

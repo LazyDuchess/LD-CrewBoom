@@ -14,6 +14,19 @@ public static class Preferences
     private const string RegistryValueTargetBundlePath = "TargetBundlePath";
     private const string RegistryValueOpenFileExplorerOnBuild = "OpenFileExplorerOnBuild";
     private const string RegistryValueAutoUpdate = "AutoUpdate";
+    private const string RegistryValueOptimizationWarnings = "OptimizationWarnings";
+
+    public static bool OptimizationWarnings
+    {
+        get
+        {
+            return Registry.GetValue(RegistryKey, RegistryValueOptimizationWarnings, "true") as string == "true";
+        }
+        set
+        {
+            Registry.SetValue(RegistryKey, RegistryValueOptimizationWarnings, value == true ? "true" : "false");
+        }
+    }
 
     public static string AuthorName
     {
