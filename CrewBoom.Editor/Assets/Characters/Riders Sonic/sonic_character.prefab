@@ -1084,11 +1084,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OverrideBundleFilename: 0
-  BundleFilename: LazyDuchess.Sonic
+  BundleFilename: Lazy Duchess.Sonic
   CharacterName: Sonic
   FreestyleAnimation: 3
   BounceAnimation: 3
   DefaultMovestyle: 3
+  UnlockType: 0
+  BoEBounceAnimation: 
+  BoEBounceAnimationVanilla: 0
   Renderers:
   - {fileID: 276935005976600001}
   - {fileID: 6720170025943759140}
