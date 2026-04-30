@@ -90,7 +90,7 @@ public static class CustomCharacterBundleBuilder
             var importer = (AudioImporter)AssetImporter.GetAtPath(assetPath);
             var settings = importer.defaultSampleSettings;
 
-            if (!importer.loadInBackground || !importer.preloadAudioData || settings.loadType != AudioClipLoadType.Streaming || settings.compressionFormat != AudioCompressionFormat.Vorbis)
+            if (!importer.loadInBackground || importer.preloadAudioData || settings.loadType != AudioClipLoadType.Streaming || settings.compressionFormat != AudioCompressionFormat.Vorbis)
             {
                 voicesOptimized = false;
                 break;
