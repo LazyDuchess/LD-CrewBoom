@@ -57,6 +57,53 @@ public static class CustomCharacterBundleBuilder
         }
     }
 
+    private static void ProcessOptimizationWarnings(CharacterDefinition definition)
+    {
+        var voices = new List<AudioClip>();
+
+        if (definition.VoiceBoostTrick != null)
+            voices.AddRange(definition.VoiceBoostTrick);
+
+        if (definition.VoiceCombo != null)
+            voices.AddRange(definition.VoiceCombo);
+
+        if (definition.VoiceDie != null)
+            voices.AddRange(definition.VoiceDie);
+
+        if (definition.VoiceDieFall != null)
+            voices.AddRange(definition.VoiceDieFall);
+
+        if (definition.VoiceGetHit != null)
+            voices.AddRange(definition.VoiceGetHit);
+
+        if (definition.VoiceJump != null)
+            voices.AddRange(definition.VoiceJump);
+
+        if (definition.VoiceTalk != null)
+            voices.AddRange(definition.VoiceTalk);
+
+        var voicesOptimized = true;
+
+        foreach(var voice in voices)
+        {
+            var assetPath = AssetDatabase.GetAssetPath(voice);
+            var importer = (AudioImporter)AssetImporter.GetAtPath(assetPath);
+            var settings = importer.defaultSampleSettings;
+
+            if (!importer.loadInBackground || !importer.preloadAudioData || settings.loadType != AudioClipLoadType.Streaming || settings.compressionFormat != AudioCompressionFormat.Vorbis)
+            {
+                voicesOptimized = false;
+                break;
+            }
+        }
+
+        if (!voicesOptimized)
+        {
+            Debug.LogWarning("One or more voice clips seem unoptimized - Consider using the \"CrewBoom -> Optimize Voice Clips\" command at the top of the editor for better in-game performance, shorter load times, and smaller file sizes.");
+            Debug.LogWarning("Ideal settings are \"Load In Background\" enabled, \"Preload Audio Data\" disabled, \"Load Type\" set to \"Streaming\", and \"Compression Format\" set to \"Vorbis\".");
+        }
+    }
+
     public static void BuildBundle(GameObject prefab)
     {
         if (!EditorUtility.IsPersistent(prefab))
@@ -182,6 +229,11 @@ public static class CustomCharacterBundleBuilder
             {
                 File.Delete(manifestPath);
                 File.Delete(manifestPath + ".manifest");
+            }
+
+            if (Preferences.OptimizationWarnings)
+            {
+                ProcessOptimizationWarnings(definition);
             }
         }
         else
