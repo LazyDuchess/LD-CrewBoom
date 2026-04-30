@@ -1,6 +1,6 @@
 
 public static class CrewBoomVersion
 {
-    public const string Version = "1.9.0";
+    public const string Version = "1.10.0";
 }
 
