@@ -75,7 +75,10 @@ function CreateProjectZip(){
         }
         if(Test-Path -Path $_.FullName -PathType leaf){
             if($doZip){
-			    AddToZip $zip $_.FullName $path
+                $relativePath = ($_ | Resolve-Path -Relative)
+                $relativePath = $relativePath -replace '^[.][\\/]', ''
+                $relativePath = $relativePath -replace '\\', '/'
+			    AddToZip $zip $_.FullName $relativePath
             }
 		}
     }
