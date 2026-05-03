@@ -62,7 +62,7 @@ namespace CrewBoomMono
             }
         }
 
-        public void Read(BinaryReader reader)
+        public void Read(BinaryReader reader, bool grafreadable = false)
         {
             var version = reader.ReadByte();
             Id = reader.ReadString();
@@ -81,7 +81,7 @@ namespace CrewBoomMono
                 var pngData = reader.ReadBytes(dataLen);
 
                 GraffitiTexture = new Texture2D(2, 2);
-                GraffitiTexture.LoadImage(pngData, true);
+                GraffitiTexture.LoadImage(pngData, !grafreadable);
             }
         }
 

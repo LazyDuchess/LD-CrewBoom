@@ -1,4 +1,5 @@
 using CrewBoomMono;
+using CrewBoom.Mono;
 using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
@@ -174,7 +175,7 @@ public static class CustomCharacterBundleBuilder
                 string pathWithoutExtension = Path.Combine(BUNDLE_OUTPUT_FOLDER, fileWithoutExtension);
                 string bundleManifestPath = projectRelativePath + ".manifest";
                 string jsonPath = pathWithoutExtension + ".json";
-                string streamPath = pathWithoutExtension + ".ldcs";
+
                 if (File.Exists(bundleManifestPath))
                 {
                     File.Delete(bundleManifestPath);
@@ -185,14 +186,13 @@ public static class CustomCharacterBundleBuilder
                     CharacterToReplace = nameof(BrcCharacter.None)
                 };
                 File.WriteAllText(jsonPath, JsonUtility.ToJson(config, true));
+
                 var streamData = new CharacterStreamData();
                 streamData.FromCharacter(definition);
-                using (var fs = new FileStream(streamPath, FileMode.Create, FileAccess.Write))
+                using (var embedded = new EmbeddedBundle(projectRelativePath))
                 {
-                    using (var bw = new BinaryWriter(fs))
-                    {
-                        streamData.Write(bw);
-                    }
+                    embedded.OpenWrite();
+                    embedded.AppendStreamData(streamData);
                 }
                 streamData.Release();
 
@@ -212,7 +212,6 @@ public static class CustomCharacterBundleBuilder
                         {
                             File.Copy(projectRelativePath, targetBundle, true);
                             File.Copy(jsonPath, Path.Combine(targetDirectory, Path.GetFileName(jsonPath)), true);
-                            File.Copy(streamPath, Path.Combine(targetDirectory, Path.GetFileName(streamPath)), true);
                             if (Preferences.OpenFileExplorerOnBuild)
                                 EditorUtility.RevealInFinder(targetBundle);
                         }
